@@ -37,6 +37,15 @@ void Lux::LogSystemSetup()
 
 bool Lux::Initialize()
 {
+    if (!sdr.Initialize())
+    {
+        Logger::LogError("SDR startup failure!");
+        return false;
+    }
+
+    // TODO test code remove.
+    sdr.OpenDevice(0);
+
     // Setup GLFW
     if (!glfwInit())
     {

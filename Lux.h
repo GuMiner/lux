@@ -5,6 +5,7 @@
 #include <glm\mat4x4.hpp>
 #include <glm\gtc\quaternion.hpp>
 #include "factories\ShaderFactory.h"
+#include "sdr\Sdr.h"
 
 struct GlobalGraphicsSettings
 {
@@ -24,6 +25,7 @@ class Lux
     GLFWwindow* window;
     GlobalGraphicsSettings settings;
     ShaderFactory shaderFactory;
+    Sdr sdr;
 
     void LogSystemSetup();
 

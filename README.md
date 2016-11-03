@@ -20,3 +20,6 @@ Licenses for dependencies are within the *licenses* folder.
 * [SFML 2.3.2] (http://www.sfml-dev.org/index.php)
 * [STB latest] (https://github.com/nothings/stb)
 
+## GPL-Compliant ('Arms length interaction') Dependencies
+---------------------------------------------------------
+* [RTL SDR] (https://github.com/osmocom/rtl-sdr)
