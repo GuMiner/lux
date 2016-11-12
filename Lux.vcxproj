@@ -24,6 +24,7 @@
     <ClCompile Include="GuCommon\shaders\ShaderFactory.cpp" />
     <ClCompile Include="GuCommon\stb\stb_implementations.cpp" />
     <ClCompile Include="GuCommon\strings\StringUtils.cpp" />
+    <ClCompile Include="GuCommon\text\SentenceManager.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Lux.cpp" />
     <ClCompile Include="sdr\RtlSdrDllLoader.cpp" />
@@ -31,9 +32,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsSetup.h" />
+    <ClInclude Include="GuCommon\data\TextDataTypes.h" />
     <ClInclude Include="GuCommon\logging\Logger.h" />
     <ClInclude Include="GuCommon\shaders\ShaderFactory.h" />
     <ClInclude Include="GuCommon\strings\StringUtils.h" />
+    <ClInclude Include="GuCommon\SentenceManager.h" />
+    <ClInclude Include="GuCommon\vertex\ColorVbo.hpp" />
+    <ClInclude Include="GuCommon\vertex\PositionVbo.hpp" />
+    <ClInclude Include="GuCommon\vertex\UvVbo.hpp" />
+    <ClInclude Include="GuCommon\vertex\VboBase.hpp" />
+    <ClInclude Include="GuCommon\vertex\VboHelper.hpp" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Lux.h" />
     <ClInclude Include="sdr\RtlSdrDllLoader.h" />

@@ -22,6 +22,9 @@
     <ClCompile Include="GuCommon\logging\Logger.cpp">
       <Filter>gucommon\logging</Filter>
     </ClCompile>
+    <ClCompile Include="text\SentenceManager.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lux.h" />
@@ -43,6 +46,27 @@
     <ClInclude Include="GuCommon\logging\Logger.h">
       <Filter>gucommon\logging</Filter>
     </ClInclude>
+        <ClInclude Include="GuCommon\text\SentenceManager.h">
+      <Filter>gucommon\text</Filter>
+    </ClInclude>
+    <ClInclude Include="GuCommon\data\TextDataTypes.h">
+      <Filter>gucommon\data</Filter>
+    </ClInclude>
+    <ClInclude Include="GuCommon\vertex\VboBase.hpp">
+      <Filter>gucommon\vertex</Filter>
+    </ClInclude>
+    <ClInclude Include="GuCommon\vertex\PositionVbo.hpp">
+      <Filter>gucommon\vertex</Filter>
+    </ClInclude>
+    <ClInclude Include="GuCommon\vertex\ColorVbo.hpp">
+      <Filter>gucommon\vertex</Filter>
+    </ClInclude>
+    <ClInclude Include="GuCommon\vertex\UvVbo.hpp">
+      <Filter>gucommon\vertex</Filter>
+    </ClInclude>
+    <ClInclude Include="GuCommon\vertex\VboHelper.hpp">
+      <Filter>gucommon\vertex</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="sdr">
@@ -62,6 +86,15 @@
     </Filter>
     <Filter Include="gucommon\shaders">
       <UniqueIdentifier>{baade055-85c6-4695-b00a-2edff2bb8850}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gucommon\data">
+      <UniqueIdentifier>{a4739d81-9f17-4d1b-9d67-d358c56c2983}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gucommon\text">
+      <UniqueIdentifier>{9996c033-93dd-45a1-ad5e-ae985626bca7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gucommon\vertex">
+      <UniqueIdentifier>{b324fae5-2daa-43c0-8762-d0ad84c89501}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
