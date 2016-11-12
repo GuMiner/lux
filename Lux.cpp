@@ -1,4 +1,5 @@
 #include <glm\gtc\matrix_transform.hpp>
+#include <SFML\System.hpp>
 #include "logging\Logger.h"
 #include "Input.h"
 #include "GraphicsSetup.h"
@@ -44,6 +45,7 @@ bool Lux::Initialize()
     }
 
     // TODO test code remove.
+    // Note we don't need to remove the device as deletion will handle that for us.
     sdr.OpenDevice(0);
 
     // Setup GLFW
@@ -200,7 +202,7 @@ bool Lux::Run()
 
 int main()
 {
-    Logger::Setup();
+    Logger::Setup("lux-log.log");
     Logger::Log("Lux ", AutoVersion::MAJOR_VERSION, ".", AutoVersion::MINOR_VERSION);
 
     Lux* lux = new Lux();

@@ -4,7 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <glm\mat4x4.hpp>
 #include <glm\gtc\quaternion.hpp>
-#include "factories\ShaderFactory.h"
+#include "shaders\ShaderFactory.h"
 #include "sdr\Sdr.h"
 
 struct GlobalGraphicsSettings

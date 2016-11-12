@@ -19,25 +19,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="factories\ShaderFactory.cpp" />
     <ClCompile Include="GraphicsSetup.cpp" />
+    <ClCompile Include="GuCommon\logging\Logger.cpp" />
+    <ClCompile Include="GuCommon\shaders\ShaderFactory.cpp" />
+    <ClCompile Include="GuCommon\stb\stb_implementations.cpp" />
+    <ClCompile Include="GuCommon\strings\StringUtils.cpp" />
     <ClCompile Include="Input.cpp" />
-    <ClCompile Include="logging\Logger.cpp" />
     <ClCompile Include="Lux.cpp" />
     <ClCompile Include="sdr\RtlSdrDllLoader.cpp" />
     <ClCompile Include="sdr\Sdr.cpp" />
-    <ClCompile Include="stb_implementations.cpp" />
-    <ClCompile Include="strings\StringUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="factories\ShaderFactory.h" />
     <ClInclude Include="GraphicsSetup.h" />
+    <ClInclude Include="GuCommon\logging\Logger.h" />
+    <ClInclude Include="GuCommon\shaders\ShaderFactory.h" />
+    <ClInclude Include="GuCommon\strings\StringUtils.h" />
     <ClInclude Include="Input.h" />
-    <ClInclude Include="logging\Logger.h" />
     <ClInclude Include="Lux.h" />
     <ClInclude Include="sdr\RtlSdrDllLoader.h" />
     <ClInclude Include="sdr\Sdr.h" />
-    <ClInclude Include="strings\StringUtils.h" />
     <ClInclude Include="version.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -117,7 +117,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);include;$(MSBuildProjectDirectory)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);include;$(MSBuildProjectDirectory);gucommon</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,7 +133,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);include;$(MSBuildProjectDirectory)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);include;$(MSBuildProjectDirectory);gucommon</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -151,7 +151,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);include;$(MSBuildProjectDirectory)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);include;$(MSBuildProjectDirectory);gucommon</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -171,7 +171,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);include;$(MSBuildProjectDirectory)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);include;$(MSBuildProjectDirectory);gucommon</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

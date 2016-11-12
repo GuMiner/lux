@@ -2,58 +2,66 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="Lux.cpp" />
-    <ClCompile Include="stb_implementations.cpp" />
-    <ClCompile Include="logging\Logger.cpp">
-      <Filter>logging</Filter>
-    </ClCompile>
-    <ClCompile Include="factories\ShaderFactory.cpp">
-      <Filter>factories</Filter>
-    </ClCompile>
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="GraphicsSetup.cpp" />
-    <ClCompile Include="strings\StringUtils.cpp">
-      <Filter>strings</Filter>
-    </ClCompile>
     <ClCompile Include="sdr\RtlSdrDllLoader.cpp">
       <Filter>sdr</Filter>
     </ClCompile>
     <ClCompile Include="sdr\Sdr.cpp">
       <Filter>sdr</Filter>
     </ClCompile>
+    <ClCompile Include="GuCommon\stb\stb_implementations.cpp">
+      <Filter>gucommon\stb</Filter>
+    </ClCompile>
+    <ClCompile Include="GuCommon\strings\StringUtils.cpp">
+      <Filter>gucommon\strings</Filter>
+    </ClCompile>
+    <ClCompile Include="GuCommon\shaders\ShaderFactory.cpp">
+      <Filter>gucommon\shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="GuCommon\logging\Logger.cpp">
+      <Filter>gucommon\logging</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lux.h" />
     <ClInclude Include="version.h" />
-    <ClInclude Include="logging\Logger.h">
-      <Filter>logging</Filter>
-    </ClInclude>
-    <ClInclude Include="factories\ShaderFactory.h">
-      <Filter>factories</Filter>
-    </ClInclude>
     <ClInclude Include="Input.h" />
     <ClInclude Include="GraphicsSetup.h" />
-    <ClInclude Include="strings\StringUtils.h">
-      <Filter>strings</Filter>
-    </ClInclude>
     <ClInclude Include="sdr\RtlSdrDllLoader.h">
       <Filter>sdr</Filter>
     </ClInclude>
     <ClInclude Include="sdr\Sdr.h">
       <Filter>sdr</Filter>
     </ClInclude>
+    <ClInclude Include="GuCommon\strings\StringUtils.h">
+      <Filter>gucommon\strings</Filter>
+    </ClInclude>
+    <ClInclude Include="GuCommon\shaders\ShaderFactory.h">
+      <Filter>gucommon\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="GuCommon\logging\Logger.h">
+      <Filter>gucommon\logging</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="factories">
-      <UniqueIdentifier>{a579d21e-b097-4da8-b073-146ad156787c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="logging">
-      <UniqueIdentifier>{062b9613-6903-4d22-880b-e0214c609e60}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="strings">
-      <UniqueIdentifier>{32f77c75-1f6e-4475-b6e2-f0e7cf4089e4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="sdr">
       <UniqueIdentifier>{41ccf6c7-a8f6-45ec-8cb6-239a31b0575a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gucommon">
+      <UniqueIdentifier>{6dac9a51-7fdb-45fa-a958-f3835ac819df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gucommon\stb">
+      <UniqueIdentifier>{523f6840-8462-4523-add4-b068a9b805af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gucommon\strings">
+      <UniqueIdentifier>{539cb3fe-c102-4b44-bfd7-8ba7240ebf05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gucommon\logging">
+      <UniqueIdentifier>{ba9dd763-44f0-4c21-922b-ff3f56742143}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gucommon\shaders">
+      <UniqueIdentifier>{baade055-85c6-4695-b00a-2edff2bb8850}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
