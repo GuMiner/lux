@@ -22,8 +22,9 @@
     <ClCompile Include="GuCommon\logging\Logger.cpp">
       <Filter>gucommon\logging</Filter>
     </ClCompile>
-    <ClCompile Include="text\SentenceManager.cpp">
-      <Filter>text</Filter>
+    <ClCompile Include="Viewer.cpp" />
+    <ClCompile Include="GuCommon\text\SentenceManager.cpp">
+      <Filter>gucommon\text</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -46,9 +47,6 @@
     <ClInclude Include="GuCommon\logging\Logger.h">
       <Filter>gucommon\logging</Filter>
     </ClInclude>
-        <ClInclude Include="GuCommon\text\SentenceManager.h">
-      <Filter>gucommon\text</Filter>
-    </ClInclude>
     <ClInclude Include="GuCommon\data\TextDataTypes.h">
       <Filter>gucommon\data</Filter>
     </ClInclude>
@@ -66,6 +64,10 @@
     </ClInclude>
     <ClInclude Include="GuCommon\vertex\VboHelper.hpp">
       <Filter>gucommon\vertex</Filter>
+    </ClInclude>
+    <ClInclude Include="Viewer.h" />
+    <ClInclude Include="GuCommon\SentenceManager.h">
+      <Filter>gucommon\text</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -96,5 +98,13 @@
     <Filter Include="gucommon\vertex">
       <UniqueIdentifier>{b324fae5-2daa-43c0-8762-d0ad84c89501}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GuCommon\text\sentenceRender.fs">
+      <Filter>gucommon\text</Filter>
+    </None>
+    <None Include="GuCommon\text\sentenceRender.vs">
+      <Filter>gucommon\text</Filter>
+    </None>
   </ItemGroup>
 </Project>

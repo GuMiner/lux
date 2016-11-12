@@ -29,6 +29,7 @@
     <ClCompile Include="Lux.cpp" />
     <ClCompile Include="sdr\RtlSdrDllLoader.cpp" />
     <ClCompile Include="sdr\Sdr.cpp" />
+    <ClCompile Include="Viewer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsSetup.h" />
@@ -47,6 +48,11 @@
     <ClInclude Include="sdr\RtlSdrDllLoader.h" />
     <ClInclude Include="sdr\Sdr.h" />
     <ClInclude Include="version.h" />
+    <ClInclude Include="Viewer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GuCommon\text\sentenceRender.fs" />
+    <None Include="GuCommon\text\sentenceRender.vs" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{DA028A80-2E57-4F6F-855C-6C752B8B0935}</ProjectGuid>

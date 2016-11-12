@@ -13,7 +13,7 @@
 #pragma comment(lib, "lib/sfml-system")
 
 Lux::Lux() 
-    : settings(), shaderFactory()
+    : shaderFactory(), sentenceManager(), viewer()
 {
 }
 
@@ -72,34 +72,22 @@ void Lux::HandleEvents(bool& focusPaused, bool& escapePaused)
 
 void Lux::Update(float currentTime, float frameTime)
 {
-    if (Input::IsKeyTyped(GLFW_KEY_G))
-    {
-        if (settings.isPolygonFillMode)
-        {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        }
-        else
-        {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        }
-
-        settings.isPolygonFillMode = !settings.isPolygonFillMode;
-    }
+    // TODO dynamic updates.
 }
-
-
 
 void Lux::Render(glm::mat4& viewMatrix)
 {
     glm::mat4 projectionMatrix = GraphicsSetup::PerspectiveMatrix * viewMatrix;
 
     // Clear the screen (and depth buffer) before any rendering begins.
-    const GLfloat color[] = { 0, 1, 0, 1 };
+    const GLfloat color[] = { 0, 0, 0, 1 };
     const GLfloat one = 1.0f;
     glClearBufferfv(GL_COLOR, 0, color);
     glClearBufferfv(GL_DEPTH, 0, &one);
 
     // TODO render something interesting.
+    glm::mat4 sentenceTestMatrix = glm::scale(glm::translate(glm::mat4(), glm::vec3(-0.821f, -0.121f, -1.0f)), glm::vec3(0.022f, 0.022f, 0.02f));
+    sentenceManager.RenderSentence(sentenceId, GraphicsSetup::PerspectiveMatrix, sentenceTestMatrix);
 }
 
 bool Lux::LoadGraphics()
@@ -112,7 +100,7 @@ bool Lux::LoadGraphics()
     glfwWindowHint(GLFW_SAMPLES, 8);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    window = glfwCreateWindow(GraphicsSetup::ScreenWidth, GraphicsSetup::ScreenHeight, "Advanced Graphics-Open World", nullptr, nullptr);
+    window = glfwCreateWindow(GraphicsSetup::ScreenWidth, GraphicsSetup::ScreenHeight, "Lux", nullptr, nullptr);
     if (!window)
     {
         Logger::LogError("Could not create the GLFW window!");
@@ -154,6 +142,17 @@ bool Lux::LoadGraphics()
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
 
+    //// Setup any assets ////
+    if (!sentenceManager.LoadFont(&shaderFactory, "fonts/DejaVuSans.ttf"))
+    {
+        Logger::LogError("Font loading failure!");
+        return false;
+    }
+
+    // TODO test code remove
+    sentenceId = sentenceManager.CreateNewSentence();
+    sentenceManager.UpdateSentence(sentenceId, "Test string 123456789-10!", 22, glm::vec3(1.0f, 1.0f, 1.0f));
+
     return true;
 }
 
@@ -170,11 +169,9 @@ bool Lux::Run()
     sf::Time clockStartTime;
     bool focusPaused = false;
     bool escapePaused = false;
-    glm::mat4 viewMatrix;
     while (!glfwWindowShouldClose(window))
     {
         clockStartTime = clock.getElapsedTime();
-        viewMatrix = glm::mat4_cast(settings.viewerOrientation) * glm::translate(glm::mat4(), -settings.viewerPosition);
 
         float frameTime = std::min(frameClock.restart().asSeconds(), 0.06f);
         HandleEvents(focusPaused, escapePaused);
@@ -185,7 +182,7 @@ bool Lux::Run()
             float gameTime = clock.getElapsedTime().asSeconds();
             Update(gameTime, frameTime);
 
-            Render(viewMatrix);
+            Render(viewer.viewMatrix);
             glfwSwapBuffers(window);
         }
 

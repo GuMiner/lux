@@ -4,6 +4,7 @@
 # Folders the user should provide
 lib
 include
+fonts
 
 # User-specific files
 *.suo

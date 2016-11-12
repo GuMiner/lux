@@ -5,27 +5,21 @@
 #include <glm\mat4x4.hpp>
 #include <glm\gtc\quaternion.hpp>
 #include "shaders\ShaderFactory.h"
+#include "text\SentenceManager.h"
 #include "sdr\Sdr.h"
-
-struct GlobalGraphicsSettings
-{
-    glm::vec3 viewerPosition;
-    glm::quat viewerOrientation;
-
-    bool isPolygonFillMode;
-
-    GlobalGraphicsSettings()
-        : isPolygonFillMode(true), viewerPosition(0.0f), viewerOrientation()
-    {
-    }
-};
+#include "Viewer.h"
 
 class Lux
 {
     GLFWwindow* window;
-    GlobalGraphicsSettings settings;
     ShaderFactory shaderFactory;
+    SentenceManager sentenceManager;
+    Viewer viewer;
+
     Sdr sdr;
+
+    // TODO test code remove.
+    int sentenceId;
 
     void LogSystemSetup();
 
