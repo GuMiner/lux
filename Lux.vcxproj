@@ -25,10 +25,13 @@
     <ClCompile Include="GuCommon\stb\stb_implementations.cpp" />
     <ClCompile Include="GuCommon\strings\StringUtils.cpp" />
     <ClCompile Include="GuCommon\text\SentenceManager.cpp" />
+    <ClCompile Include="Hertz.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Lux.cpp" />
     <ClCompile Include="sdr\RtlSdrDllLoader.cpp" />
     <ClCompile Include="sdr\Sdr.cpp" />
+    <ClCompile Include="sdr\SdrBuffer.cpp" />
+    <ClCompile Include="Tuner.cpp" />
     <ClCompile Include="Viewer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -43,10 +46,13 @@
     <ClInclude Include="GuCommon\vertex\UvVbo.hpp" />
     <ClInclude Include="GuCommon\vertex\VboBase.hpp" />
     <ClInclude Include="GuCommon\vertex\VboHelper.hpp" />
+    <ClInclude Include="Hertz.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Lux.h" />
     <ClInclude Include="sdr\RtlSdrDllLoader.h" />
     <ClInclude Include="sdr\Sdr.h" />
+    <ClInclude Include="sdr\SdrBuffer.h" />
+    <ClInclude Include="Tuner.h" />
     <ClInclude Include="version.h" />
     <ClInclude Include="Viewer.h" />
   </ItemGroup>

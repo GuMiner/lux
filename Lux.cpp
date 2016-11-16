@@ -1,8 +1,11 @@
+#include <sstream>
+#include <string>
 #include <glm\gtc\matrix_transform.hpp>
 #include <SFML\System.hpp>
 #include "logging\Logger.h"
 #include "Input.h"
 #include "GraphicsSetup.h"
+#include "Hertz.h"
 #include "version.h"
 #include "Lux.h"
 
@@ -13,7 +16,8 @@
 #pragma comment(lib, "lib/sfml-system")
 
 Lux::Lux() 
-    : shaderFactory(), sentenceManager(), viewer()
+    : shaderFactory(), sentenceManager(), viewer(),
+      sdr(), dataBuffer(&sdr, 0, 80, 16) // TODO configuration somewhere. TODO device ID should be passed-in separately.
 {
 }
 
@@ -46,7 +50,13 @@ bool Lux::Initialize()
 
     // TODO test code remove.
     // Note we don't need to remove the device as deletion will handle that for us.
-    sdr.OpenDevice(0);
+    Logger::Log("Open device: ", sdr.OpenDevice(0));
+
+    Logger::Log("Setting center frequency: ", sdr.SetCenterFrequency(0, Hertz(89, 500, 0).GetFrequency()));
+    Logger::Log("Setting sampling rate to max w/o dropped packets: ", sdr.SetSampleRate(0, Hertz(2, 400, 0).GetFrequency()));
+    Logger::Log("Setting bandwidth to sampling rate to use quadrature sampling: ", sdr.SetTunerBandwidth(0, Hertz(2, 400, 0).GetFrequency()));
+    Logger::Log("Setting auto-gain: Tuner: ", sdr.SetTunerGainMode(0, false), " Internal: ", sdr.SetInternalAutoGain(0, true));
+    dataBuffer.StartAcquisition();
 
     // Setup GLFW
     if (!glfwInit())
@@ -60,6 +70,8 @@ bool Lux::Initialize()
 
 void Lux::Deinitialize()
 {
+    dataBuffer.StopAcquisition();
+
     glfwTerminate();
 }
 
@@ -72,7 +84,9 @@ void Lux::HandleEvents(bool& focusPaused, bool& escapePaused)
 
 void Lux::Update(float currentTime, float frameTime)
 {
-    // TODO dynamic updates.
+    std::stringstream speed;
+    speed << "Rate: " << dataBuffer.GetCurrentSampleRate();
+    sentenceManager.UpdateSentence(dataSpeedSentenceId, speed.str(), 22, glm::vec3(1.0f, 1.0f, 1.0f));
 }
 
 void Lux::Render(glm::mat4& viewMatrix)
@@ -88,6 +102,9 @@ void Lux::Render(glm::mat4& viewMatrix)
     // TODO render something interesting.
     glm::mat4 sentenceTestMatrix = glm::scale(glm::translate(glm::mat4(), glm::vec3(-0.821f, -0.121f, -1.0f)), glm::vec3(0.022f, 0.022f, 0.02f));
     sentenceManager.RenderSentence(sentenceId, GraphicsSetup::PerspectiveMatrix, sentenceTestMatrix);
+
+    sentenceTestMatrix = glm::scale(glm::translate(glm::mat4(), glm::vec3(-0.821f, -0.091f, -1.0f)), glm::vec3(0.022f, 0.022f, 0.02f));
+    sentenceManager.RenderSentence(dataSpeedSentenceId, GraphicsSetup::PerspectiveMatrix, sentenceTestMatrix);
 }
 
 bool Lux::LoadGraphics()
@@ -152,6 +169,9 @@ bool Lux::LoadGraphics()
     // TODO test code remove
     sentenceId = sentenceManager.CreateNewSentence();
     sentenceManager.UpdateSentence(sentenceId, "Test string 123456789-10!", 22, glm::vec3(1.0f, 1.0f, 1.0f));
+
+    dataSpeedSentenceId = sentenceManager.CreateNewSentence();
+    sentenceManager.UpdateSentence(dataSpeedSentenceId, "Speed: ", 22, glm::vec3(1.0f, 1.0f, 1.0f));
 
     return true;
 }

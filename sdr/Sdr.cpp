@@ -8,6 +8,11 @@ std::vector<glm::ivec2> Sdr::ValidSampleRateRanges = std::vector<glm::ivec2>(
     glm::ivec2(240000, 3200000) // Range at which we expect to loose samples.
 });
 
+std::vector<glm::ivec2> Sdr::ValidFrequencyRanges = std::vector<glm::ivec2>(
+{
+    glm::ivec2(24000000, 1766000000)
+});
+
 Sdr::Sdr()
     : rawLayer(), loadedDevices()
 {

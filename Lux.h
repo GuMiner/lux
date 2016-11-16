@@ -7,6 +7,7 @@
 #include "shaders\ShaderFactory.h"
 #include "text\SentenceManager.h"
 #include "sdr\Sdr.h"
+#include "sdr\SdrBuffer.h"
 #include "Viewer.h"
 
 class Lux
@@ -17,9 +18,11 @@ class Lux
     Viewer viewer;
 
     Sdr sdr;
+    SdrBuffer dataBuffer;
 
     // TODO test code remove.
     int sentenceId;
+    int dataSpeedSentenceId;
 
     void LogSystemSetup();
 

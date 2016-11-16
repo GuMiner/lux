@@ -26,6 +26,11 @@
     <ClCompile Include="GuCommon\text\SentenceManager.cpp">
       <Filter>gucommon\text</Filter>
     </ClCompile>
+    <ClCompile Include="Tuner.cpp" />
+    <ClCompile Include="Hertz.cpp" />
+    <ClCompile Include="sdr\SdrBuffer.cpp">
+      <Filter>sdr</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lux.h" />
@@ -68,6 +73,11 @@
     <ClInclude Include="Viewer.h" />
     <ClInclude Include="GuCommon\SentenceManager.h">
       <Filter>gucommon\text</Filter>
+    </ClInclude>
+    <ClInclude Include="Tuner.h" />
+    <ClInclude Include="Hertz.h" />
+    <ClInclude Include="sdr\SdrBuffer.h">
+      <Filter>sdr</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

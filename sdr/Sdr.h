@@ -5,17 +5,6 @@
 #include <glm\vec2.hpp>
 #include "RtlSdrDllLoader.h"
 
-// typedef int rtlsdr_set_center_freq(void* device, unsigned int frequency);
-// 
-//     /*!
-//     * Get actual frequency the device is tuned to.
-//     *
-//     * \param dev the device handle given by rtlsdr_open()
-//     * \return 0 on error, frequency in Hz otherwise
-//     */
-// typedef unsigned int rtlsdr_get_center_freq(void* device);
-
-
 struct DeviceDetails
 {
     void* device;
@@ -41,8 +30,9 @@ class Sdr
     unsigned int deviceCounts;
     std::map<int, DeviceDetails> loadedDevices;
 public:
-    const unsigned int BLOCK_SIZE = 16384;
+    static const unsigned int BLOCK_SIZE = 16384;
     static std::vector<glm::ivec2> ValidSampleRateRanges;
+    static std::vector<glm::ivec2> ValidFrequencyRanges;
 
     Sdr();
     
