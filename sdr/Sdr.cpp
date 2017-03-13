@@ -1,3 +1,4 @@
+#include <sstream>
 #include "logging\Logger.h"
 #include "Sdr.h"
 
@@ -75,6 +76,7 @@ bool Sdr::OpenDevice(int deviceId)
         Logger::Log("Couldn't get the number of tuner gain settings available!");
         return false;
     }
+    Logger::Log("Received ", numberOfGainValues, " possible gain values.");
 
     gains.reserve(numberOfGainValues);
     if (rawLayer.get_tuner_gains(device, &gains[0]) <= 0)
@@ -82,6 +84,17 @@ bool Sdr::OpenDevice(int deviceId)
         Logger::Log("Couldn't get the tuner gain settings available!");
         return false;
     }
+
+    std::stringstream possibleGainValues;
+    for (unsigned int i = 0; i < gains.size(); i++)
+    {
+        possibleGainValues << i;
+        if (i != gains.size() - 1)
+        {
+            possibleGainValues << ", ";
+        }
+    }
+    Logger::Log("Possible gain values are: ", possibleGainValues.str());
 
     loadedDevices[deviceId] = DeviceDetails(device, gains);
     return true;

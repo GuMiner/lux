@@ -12,6 +12,8 @@
 // TODO break this apart correctly from CPP to H when it isn't too late, make it easy for a consumer to retrieve the data in nice blocks, and actually display the data.
 class SdrBuffer
 {
+    const unsigned int bufferBlockReadSize = 16;
+
     Sdr* sdrDevice;
     unsigned int deviceId;
 
@@ -20,16 +22,13 @@ class SdrBuffer
     std::future<void> dataAcquisitionThread;
     
     // Transient data storage.
+    unsigned int readBlocks;
     unsigned int bufferBlocks;
-    unsigned int bufferBlockReadSize;
     std::vector<unsigned char> rollingBuffer;
 
     // Data from start to here is valid, exclusive.
+    std::atomic<unsigned int> blockId;
     unsigned int currentBufferPosition;
-
-    // Data from here to end is *invalid*, inclusive.
-    unsigned int endBufferPosition;
-    
 
     // Used to compute how fast we roll through the rolling buffer.
     std::atomic<float> elapsedTime;
@@ -38,13 +37,14 @@ class SdrBuffer
 public:
     
     // BlockReadSize is recommended to be 16, blocks should be a multiple of the read size for best performance (ie, 80)
-    SdrBuffer(Sdr* sdrDevice, unsigned int deviceId, unsigned int blocks, unsigned int blockReadSize)
+    SdrBuffer(Sdr* sdrDevice, unsigned int deviceId, unsigned int bufferSize)
         : sdrDevice(sdrDevice), deviceId(deviceId), isAcquiring(false), isTerminating(false), 
-          bufferBlocks(blocks), bufferBlockReadSize(blockReadSize),
-          rollingBuffer(), currentBufferPosition(0), endBufferPosition(Sdr::BLOCK_SIZE * blocks - 1),
+          readBlocks(bufferSize), bufferBlocks(bufferSize * bufferBlockReadSize),
+          rollingBuffer(), currentBufferPosition(0), blockId(0),
           elapsedTime(0.0f), acquiredSamples(0), dataSampleRate(0.0f)
     {
-        rollingBuffer.reserve(Sdr::BLOCK_SIZE * blocks);
+        Logger::Log("Creating a buffer of ", bufferBlocks, " blocks with a reads size of ", bufferBlockReadSize);
+        rollingBuffer.reserve(Sdr::BLOCK_SIZE * bufferBlocks);
     }
     
     float GetCurrentSampleRate() const
@@ -52,9 +52,9 @@ public:
         return dataSampleRate;
     }
 
-    unsigned int GetBufferSize() const
+    unsigned int GetCurrentBlockId() const
     {
-        return Sdr::BLOCK_SIZE * bufferBlocks;
+        return blockId;
     }
 
     unsigned int GetReadSize() const
@@ -62,12 +62,23 @@ public:
         return Sdr::BLOCK_SIZE * bufferBlockReadSize;
     }
 
-    void AdvanceBufferPositions(unsigned int bytesRead)
+    unsigned int GetReadBlocks() const
     {
-        currentBufferPosition += (bytesRead + 1);
-        if (GetBufferSize() - GetReadSize() < currentBufferPosition)
+        return readBlocks;
+    }
+
+    const std::vector<unsigned char>& GetBuffer() const
+    {
+        return rollingBuffer;
+    }
+
+    void AdvanceBufferPositions()
+    {
+        ++blockId;
+        currentBufferPosition += GetReadSize();
+        if (currentBufferPosition > (Sdr::BLOCK_SIZE * bufferBlocks - GetReadSize()))
         {
-            endBufferPosition = currentBufferPosition;
+            Logger::Log(currentBufferPosition);
             currentBufferPosition = 0;
         }
     }
@@ -105,10 +116,15 @@ public:
             {
                 Logger::Log("Error reading from the SDR device: ", deviceId);
             }
+            else if (bytesRead != this->GetReadSize())
+            {
+                Logger::LogWarn("Unable to read a full block from the SDR device. Read ", bytesRead, " bytes instead.");
+                Logger::LogWarn("Block ID ", blockId.load(), " will be corrupted.");
+            }
 
-            AdvanceBufferPositions(bytesRead);
+            AdvanceBufferPositions();
 
-            // Compute how fast we're acquiring samples.
+            // Compute how fast we're acquiring samples, averaged over a second.
             acquiredSamples = acquiredSamples + bytesRead;
             elapsedTime = elapsedTime + clock.getElapsedTime().asSeconds();
             if (elapsedTime > 1.0f)

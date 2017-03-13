@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FilterBase.cpp" />
     <ClCompile Include="GraphicsSetup.cpp" />
     <ClCompile Include="GuCommon\logging\Logger.cpp" />
     <ClCompile Include="GuCommon\shaders\ShaderFactory.cpp" />
@@ -35,6 +36,7 @@
     <ClCompile Include="Viewer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FilterBase.h" />
     <ClInclude Include="GraphicsSetup.h" />
     <ClInclude Include="GuCommon\data\TextDataTypes.h" />
     <ClInclude Include="GuCommon\logging\Logger.h" />

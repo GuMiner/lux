@@ -17,7 +17,7 @@
 
 Lux::Lux() 
     : shaderFactory(), sentenceManager(), viewer(),
-      sdr(), dataBuffer(&sdr, 0, 80, 16) // TODO configuration somewhere. TODO device ID should be passed-in separately.
+      sdr(), dataBuffer(&sdr, 0, 30) // TODO configuration somewhere. TODO device ID should be passed-in separately.
 {
 }
 
@@ -48,7 +48,6 @@ bool Lux::Initialize()
         return false;
     }
 
-    // TODO test code remove.
     // Note we don't need to remove the device as deletion will handle that for us.
     Logger::Log("Open device: ", sdr.OpenDevice(0));
 
@@ -253,4 +252,3 @@ int main()
     Logger::Shutdown();
     return 0;
 }
-

@@ -31,6 +31,9 @@
     <ClCompile Include="sdr\SdrBuffer.cpp">
       <Filter>sdr</Filter>
     </ClCompile>
+    <ClCompile Include="FilterBase.cpp">
+      <Filter>filters</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lux.h" />
@@ -79,6 +82,9 @@
     <ClInclude Include="sdr\SdrBuffer.h">
       <Filter>sdr</Filter>
     </ClInclude>
+    <ClInclude Include="FilterBase.h">
+      <Filter>filters</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="sdr">
@@ -107,6 +113,9 @@
     </Filter>
     <Filter Include="gucommon\vertex">
       <UniqueIdentifier>{b324fae5-2daa-43c0-8762-d0ad84c89501}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="filters">
+      <UniqueIdentifier>{836010b6-62ad-451d-aa91-0d3f76ec2a49}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
