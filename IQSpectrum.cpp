@@ -7,6 +7,31 @@ IQSpectrum::IQSpectrum(SdrBuffer* dataBuffer)
 {
 }
 
+// Let's see the IQ graph only within a 3.71 kHz bandwidth. With our current sample rate of 2.4 MHz, we will decimate 647 samples for 1 sample of data.
+void IQSpectrum::FormDecimator()
+{
+    const float pi = 3.141592653589f;
+    const float cutoffFrequency = 3710.0f;
+    const int decimationAmount = 647;
+
+    decimationFactors.reserve(647);
+    for (int i = 0; i < decimationAmount; i++)
+    {
+        int j = i - decimationAmount / 2;
+        float factor = j == 0 ? 1.0f : (std::sin(2 * pi * cutoffFrequency * j) / (j * pi));
+        decimationFactors.push_back(factor);
+
+        // TODO make a filter display pane, a common filter logic engine / former, etc.
+        float offsetX = -10.0f;
+        float offsetY = -6.0f;
+        float zPos = -30.0f;
+        float xEffective = offsetX + ((float)i / (float)decimationAmount) * 8.0f;
+
+        filterData.positionBuffer.vertices.push_back(glm::vec3(xEffective, offsetY + factor * 4.0f, zPos));
+        filterData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 1.0f, 0.0f));
+    }
+}
+
 bool IQSpectrum::LoadGraphics(ShaderFactory* shaderFactory)
 {
     Logger::Log("Loading the point rendering shading program...");
@@ -26,6 +51,41 @@ bool IQSpectrum::LoadGraphics(ShaderFactory* shaderFactory)
     spectrumData.positionBuffer.Initialize();
     spectrumData.colorBuffer.Initialize();
     spectrumData.lastBufferSize = 0;
+
+    glGenVertexArrays(1, &filterData.vao);
+    glBindVertexArray(filterData.vao);
+
+    filterData.positionBuffer.Initialize();
+    filterData.colorBuffer.Initialize();
+
+    FormDecimator();
+    firstUpdate = true;
+
+    glGenVertexArrays(1, &borderData.vao);
+    glBindVertexArray(borderData.vao);
+
+    borderData.positionBuffer.Initialize();
+    borderData.colorBuffer.Initialize();
+    borderData.positionBuffer.vertices.push_back(glm::vec3(-6.0f, -6.0f, -30.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(-6.0f, 6.0f, -30.0f));
+    borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+    borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+
+    borderData.positionBuffer.vertices.push_back(glm::vec3(-6.0f, -6.0f, -30.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(6.0f, -6.0f, -30.0f));
+    borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+    borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+
+    borderData.positionBuffer.vertices.push_back(glm::vec3(-6.0f, 6.0f, -30.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(6.0f, 6.0f, -30.0f));
+    borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+    borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+
+    borderData.positionBuffer.vertices.push_back(glm::vec3(6.0f, -6.0f, -30.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(6.0f, 6.0f, -30.0f));
+    borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+    borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+
     enabled = true;
 
     return true;
@@ -36,21 +96,34 @@ void IQSpectrum::Process(std::vector<unsigned char>* block)
     Logger::Log("Processing block of ", block->size(), " elements in filter '", GetName(), "'.");
 
     // Displays the IQ spectrum flattened on the XY plane.
-    float scale = (1.0f / 256.0f) * 12.0f;
-    float offsetX = -6.0f;
-    float offsetY = -6.0f;
+    float scale = (1.0f / 127.5f) * 6.0f;
+    float offsetX = 0.0f;
+    float offsetY = 0.0f;
     float zPos = -30.0f;
 
     graphicsUpdateLock.lock();
     spectrumData.positionBuffer.vertices.clear();
     spectrumData.colorBuffer.vertices.clear();
-    for (unsigned int n = 0; n < 200 && n < block->size() / 2; n++)
+    for (unsigned int n = 0; n < block->size() - decimationFactors.size() * 2; n += decimationFactors.size() * 2) // n < block->size() / 2; n++)
     {
-        float i = (*block)[n * 2];
-        float q = (*block)[n * 2 + 1];
-        spectrumData.positionBuffer.vertices.push_back(glm::vec3(i * scale + offsetX, q * scale + offsetY, zPos));
+        // TODO determine how to properly decimate IQ signals.
+        // TODO this leads to discontinuities at edges. We should grab two buffers and process that to avoid boundary problems.
+        float i = 0;
+        float q = 0;
+        for (int m = 0; m < decimationFactors.size(); m++)
+        {
+            // TODO there are weird artefacts using these decimation factors (scaling & descaling).s
+            i += ((float)(*block)[(n + m) * 2] - 127.5f) * scale * decimationFactors[m];
+            q += ((float)(*block)[(n + m) * 2 + 1] - 127.5f) * scale * decimationFactors[m];
+        }
+        
+        // i = ((float)(*block)[n * 2] - 127.5f) * scale;
+        // q = ((float)(*block)[n * 2 + 1] - 127.5f) * scale;
+
+        spectrumData.positionBuffer.vertices.push_back(glm::vec3(i + offsetX, q + offsetY, zPos));
         spectrumData.colorBuffer.vertices.push_back(glm::vec3(0.50f + i * (1.0f / 512.0f), 0.50f + q * (1.0f / 512.0f), 1.0f));
     }
+
 
     // Current view plane is at NEGATIVE 30, extending roughtly 17x10 (center to edges). Thats ... the reverse of what it should be. To investigate later.
     // for (int i = 0; i < 20; i += 1)
@@ -76,6 +149,21 @@ void IQSpectrum::Render(glm::mat4& projectionMatrix)
 {
     if (updateGraphics)
     {
+        if (firstUpdate)
+        {
+            glBindVertexArray(filterData.vao);
+
+            filterData.positionBuffer.TransferToOpenGl();
+            filterData.colorBuffer.TransferToOpenGl();
+
+            glBindVertexArray(borderData.vao);
+
+            borderData.positionBuffer.TransferToOpenGl();
+            borderData.colorBuffer.TransferToOpenGl();
+
+            firstUpdate = false;
+        }
+
         // Graphics updates must be on the graphics thread.
         glBindVertexArray(spectrumData.vao);
 
@@ -92,15 +180,23 @@ void IQSpectrum::Render(glm::mat4& projectionMatrix)
         return;
     }
 
+    // Render the IQ spectrum
     glUseProgram(spectrumProgram.programId);
     glBindVertexArray(spectrumData.vao);
 
     glUniformMatrix4fv(spectrumProgram.projMatrixLocation, 1, GL_FALSE, &projectionMatrix[0][0]);
     glUniform1f(spectrumProgram.transparencyLocation, 1.0f);
-    glUniform1f(spectrumProgram.pointSizeLocation, 5.0f);
+    glUniform1f(spectrumProgram.pointSizeLocation, 1.0f);
 
-    
     glDrawArrays(GL_POINTS, 0, spectrumData.lastBufferSize);
+
+    // Render the decimation filter (TODO should be separate)
+    glBindVertexArray(filterData.vao);
+    glDrawArrays(GL_POINTS, 0, filterData.positionBuffer.vertices.size());
+
+    glBindVertexArray(borderData.vao);
+    glDrawArrays(GL_LINES, 0, borderData.positionBuffer.vertices.size());
+
 }
 
 IQSpectrum::~IQSpectrum()

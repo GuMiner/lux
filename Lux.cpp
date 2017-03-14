@@ -52,7 +52,7 @@ bool Lux::Initialize()
     // Note we don't need to remove the device as deletion will handle that for us.
     Logger::Log("Open device: ", sdr.OpenDevice(0));
 
-    Logger::Log("Setting center frequency: ", sdr.SetCenterFrequency(0, Hertz(89, 500, 0).GetFrequency()));
+    Logger::Log("Setting center frequency: ", sdr.SetCenterFrequency(0, Hertz(452,734,0).GetFrequency())); // 452, 734, 0 89,500,0
     Logger::Log("Setting sampling rate to max w/o dropped packets: ", sdr.SetSampleRate(0, Hertz(2, 400, 0).GetFrequency()));
     Logger::Log("Setting bandwidth to sampling rate to use quadrature sampling: ", sdr.SetTunerBandwidth(0, Hertz(2, 400, 0).GetFrequency()));
     Logger::Log("Setting auto-gain: Tuner: ", sdr.SetTunerGainMode(0, false), " Internal: ", sdr.SetInternalAutoGain(0, true));

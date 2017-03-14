@@ -21,12 +21,26 @@ struct PointSpectrumData
     std::size_t lastBufferSize;
 };
 
+struct BorderData
+{
+    GLuint vao;
+    PositionVbo positionBuffer;
+    ColorVbo colorBuffer;
+};
+
 class IQSpectrum : public FilterBase
 {
     PointSpectrumProgram spectrumProgram;
     PointSpectrumData spectrumData;
+    BorderData borderData;
+    PointSpectrumData filterData;
+
 
     std::mutex graphicsUpdateLock;
+
+    bool firstUpdate;
+    std::vector<float> decimationFactors;
+    void FormDecimator();
 
 public:
     IQSpectrum(SdrBuffer* dataBuffer);
