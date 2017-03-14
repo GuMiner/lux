@@ -3,6 +3,7 @@
 #include <glm\gtc\matrix_transform.hpp>
 #include <SFML\System.hpp>
 #include "logging\Logger.h"
+#include "IQSpectrum.h"
 #include "Input.h"
 #include "GraphicsSetup.h"
 #include "Hertz.h"
@@ -17,7 +18,7 @@
 
 Lux::Lux() 
     : shaderFactory(), sentenceManager(), viewer(),
-      sdr(), dataBuffer(&sdr, 0, 30) // TODO configuration somewhere. TODO device ID should be passed-in separately.
+      sdr(), dataBuffer(&sdr, 0, 30), filters() // TODO configuration somewhere. TODO device ID should be passed-in separately.
 {
 }
 
@@ -104,6 +105,12 @@ void Lux::Render(glm::mat4& viewMatrix)
 
     sentenceTestMatrix = glm::scale(glm::translate(glm::mat4(), glm::vec3(-0.821f, -0.091f, -1.0f)), glm::vec3(0.022f, 0.022f, 0.02f));
     sentenceManager.RenderSentence(dataSpeedSentenceId, GraphicsSetup::PerspectiveMatrix, sentenceTestMatrix);
+
+    // Render all our filters.
+    for (FilterBase* filter : filters)
+    {
+        filter->Render(projectionMatrix);
+    }
 }
 
 bool Lux::LoadGraphics()
@@ -172,11 +179,26 @@ bool Lux::LoadGraphics()
     dataSpeedSentenceId = sentenceManager.CreateNewSentence();
     sentenceManager.UpdateSentence(dataSpeedSentenceId, "Speed: ", 22, glm::vec3(1.0f, 1.0f, 1.0f));
 
+    filters.push_back(new IQSpectrum(&dataBuffer));
+    for (FilterBase* filter : filters)
+    {
+        if (!filter->LoadGraphics(&shaderFactory))
+        {
+            Logger::LogError("Error loading filter '", filter->GetName(), "'.");
+            return false;
+        }
+    }
+
     return true;
 }
 
 void Lux::UnloadGraphics()
 {
+    for (FilterBase* filter : filters)
+    {
+        delete filter;
+    }
+
     glfwDestroyWindow(window);
     window = nullptr;
 }

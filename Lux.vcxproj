@@ -28,6 +28,7 @@
     <ClCompile Include="GuCommon\text\SentenceManager.cpp" />
     <ClCompile Include="Hertz.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="IQSpectrum.cpp" />
     <ClCompile Include="Lux.cpp" />
     <ClCompile Include="sdr\RtlSdrDllLoader.cpp" />
     <ClCompile Include="sdr\Sdr.cpp" />
@@ -50,6 +51,7 @@
     <ClInclude Include="GuCommon\vertex\VboHelper.hpp" />
     <ClInclude Include="Hertz.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="IQSpectrum.h" />
     <ClInclude Include="Lux.h" />
     <ClInclude Include="sdr\RtlSdrDllLoader.h" />
     <ClInclude Include="sdr\Sdr.h" />

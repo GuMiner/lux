@@ -52,9 +52,9 @@ public:
         return dataSampleRate;
     }
 
-    unsigned int GetCurrentBlockId() const
+    unsigned int GetCurrentBlockId()
     {
-        return blockId;
+        return blockId.load();
     }
 
     unsigned int GetReadSize() const
@@ -78,7 +78,6 @@ public:
         currentBufferPosition += GetReadSize();
         if (currentBufferPosition > (Sdr::BLOCK_SIZE * bufferBlocks - GetReadSize()))
         {
-            Logger::Log(currentBufferPosition);
             currentBufferPosition = 0;
         }
     }

@@ -6,6 +6,7 @@
 #include <glm\gtc\quaternion.hpp>
 #include "shaders\ShaderFactory.h"
 #include "text\SentenceManager.h"
+#include "FilterBase.h"
 #include "sdr\Sdr.h"
 #include "sdr\SdrBuffer.h"
 #include "Viewer.h"
@@ -21,6 +22,7 @@ class Lux
     SdrBuffer dataBuffer;
 
     // TODO test code remove.
+    std::vector<FilterBase*> filters;
     int sentenceId;
     int dataSpeedSentenceId;
 

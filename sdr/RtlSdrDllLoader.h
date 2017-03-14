@@ -1,5 +1,4 @@
 #pragma once
-#include <Windows.h>
 
 typedef unsigned int(*rtlsdr_get_device_count)();
 typedef const char*(*rtlsdr_get_device_name)(unsigned int index);
@@ -23,7 +22,8 @@ typedef int(*rtlsdr_read_sync)(void *device, void *buffer, int length, int *n_re
 
 class RtlSdrDllLoader
 {
-    HMODULE dllHandle;
+    // Saving this as void* instead of HMODULE to avoid percolating Windows.h throughout the codebase.
+    void* dllHandle;
 
 public:
     // All the function pointers we need to access bytes from the device.

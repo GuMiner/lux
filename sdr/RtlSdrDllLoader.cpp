@@ -4,7 +4,7 @@
 
 // Avoid too much duplicate typing...
 #define LoadFunction(functionName) \
-    functionName = (rtlsdr_##functionName)GetProcAddress(dllHandle, "rtlsdr_" #functionName); \
+    functionName = (rtlsdr_##functionName)GetProcAddress((HMODULE)dllHandle, "rtlsdr_" #functionName); \
     if (!functionName) \
     { \
         Logger::LogError("Couldn't load the rtlsdr_" #functionName " function: ", GetLastError()); \
@@ -56,6 +56,6 @@ RtlSdrDllLoader::~RtlSdrDllLoader()
 {
     if (dllHandle != nullptr)
     {
-        FreeLibrary(dllHandle);
+        FreeLibrary((HMODULE)dllHandle);
     }
 }

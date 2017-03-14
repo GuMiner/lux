@@ -1,8 +1,10 @@
 #pragma once
 #include <chrono>
+#include <future>
 #include <thread>
 #include <glm\gtc\matrix_transform.hpp>
 #include "sdr\SdrBuffer.h"
+#include "GuCommon\shaders\ShaderFactory.h"
 
 // Defines the base class for filter operations performed on I/Q SDR data
 class FilterBase
@@ -13,44 +15,83 @@ class FilterBase
     std::vector<unsigned char> currentBlock;
 
     bool acquiringBlocks;
+    std::future<void> acquisitionThread;
 
     // Continually acquire blocks, sending them to the associated process function in a mirrored data set.
     void AcquireBlocks()
     {
+        bool wasEnabled = true;
         while (acquiringBlocks)
         {
-            while (acquiringBlocks && localBlockId != dataBuffer->GetCurrentBlockId())
+            if (enabled)
             {
-                // Acquire and process the new block.
-                int idx = (localBlockId % dataBuffer->GetReadBlocks());
-                int startOffset = idx * dataBuffer->GetReadSize();
-                int endOffset = (idx + 1) * dataBuffer->GetReadSize();
-                currentBlock.insert(currentBlock.begin(), dataBuffer->GetBuffer().begin() + startOffset, dataBuffer->GetBuffer().begin() + endOffset);
-                this->Process(&currentBlock);
+                if (!wasEnabled)
+                {
+                    localBlockId = dataBuffer->GetCurrentBlockId();
+                    wasEnabled = true;
+                }
 
-                ++localBlockId;
+                while (acquiringBlocks && localBlockId != dataBuffer->GetCurrentBlockId())
+                {
+                    // Acquire and process the new block.
+                    int idx = (localBlockId % dataBuffer->GetReadBlocks());
+                    int startOffset = idx * dataBuffer->GetReadSize();
+                    int endOffset = (idx + 1) * dataBuffer->GetReadSize();
+                    currentBlock.clear();
+                    currentBlock.insert(currentBlock.begin(), dataBuffer->GetBuffer().begin() + startOffset, dataBuffer->GetBuffer().begin() + endOffset);
+                    
+                    Logger::Log("Filter '", GetName(), "' processing new block ID ", (int)localBlockId, ".");
+                    this->Process(&currentBlock);
+
+                    ++localBlockId;
+                }
+
+                // Sleep for a half of the time it takes to acquire a block, so we don't leave the processing step with insufficient leeway in time.
+                float currentSampleRate = dataBuffer->GetCurrentSampleRate();
+                if (currentSampleRate > 1e4)
+                {
+                    // If the sample rate is lower, we're still initializing. Don't wait.
+                    float sleepInMicroseconds = (1e6f * (float)dataBuffer->GetReadSize()) / (currentSampleRate * 2.0f);
+                    // Logger::Log("Filter '", GetName(), "' sleeping for ", sleepInMicroseconds, " us.");
+                    std::this_thread::sleep_for(std::chrono::microseconds((long)sleepInMicroseconds));
+                }
             }
-
-            // Sleep for a half of the time it takes to acquire a block, so we don't leave the processing step with insufficient leeway in time.
-            float currentSampleRate = dataBuffer->GetCurrentSampleRate();
-            if (currentSampleRate > 1e4)
+            else
             {
-                // If the sample rate is lower, we're still initializing. Don't wait.
-                float sleepInMicroseconds = (1e6 * (float)dataBuffer->GetReadSize()) / (currentSampleRate * 2.0f);
-                std::this_thread::sleep_for(std::chrono::microseconds((long)sleepInMicroseconds));
+                wasEnabled = false;
+                std::this_thread::sleep_for(std::chrono::milliseconds(500));
+                Logger::Log("Sleeing for 500 ms as the '", GetName(), "' filter was disabled.");
             }
         }
     }
 
 protected:
-    
+    bool enabled;
+    bool updateGraphics;
+
+    void StopFilter()
+    {
+        if (acquiringBlocks)
+        {
+            acquiringBlocks = false;
+            acquisitionThread.wait();
+        }
+    }
+
 public:
     FilterBase(SdrBuffer* dataBuffer)
         : dataBuffer(dataBuffer), acquiringBlocks(true)
     {
         localBlockId = dataBuffer->GetCurrentBlockId();
         currentBlock.reserve(dataBuffer->GetReadSize());
+
+        enabled = false;
+        acquisitionThread = std::async(std::launch::async, &FilterBase::AcquireBlocks, this);
     }
+
+    virtual const char* GetName() const = 0;
+
+    virtual bool LoadGraphics(ShaderFactory* shaderFactory) = 0;
 
     // Performs filter-specific short-term processing. Called for every new block.
     // Processes that need several blocks, or are expected to acquire blocks and then
@@ -61,9 +102,9 @@ public:
     // Renders graphical aspects associated with the filter.
     virtual void Render(glm::mat4& projectionMatrix) = 0;
 
-    ~FilterBase()
+    virtual ~FilterBase()
     {
-        acquiringBlocks = false;
+        StopFilter();
     }
 };
 

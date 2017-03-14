@@ -1,7 +1,6 @@
 #pragma once
 #include <map>
 #include <vector>
-#include <Windows.h>
 #include <glm\vec2.hpp>
 #include "RtlSdrDllLoader.h"
 
