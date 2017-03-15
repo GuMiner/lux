@@ -26,16 +26,23 @@
     <ClCompile Include="GuCommon\text\SentenceManager.cpp">
       <Filter>gucommon\text</Filter>
     </ClCompile>
-    <ClCompile Include="Tuner.cpp" />
-    <ClCompile Include="Hertz.cpp" />
     <ClCompile Include="sdr\SdrBuffer.cpp">
       <Filter>sdr</Filter>
     </ClCompile>
-    <ClCompile Include="FilterBase.cpp">
+    <ClCompile Include="filters\FilterBase.cpp">
       <Filter>filters</Filter>
     </ClCompile>
-    <ClCompile Include="IQSpectrum.cpp">
+    <ClCompile Include="filters\IQSpectrum.cpp">
       <Filter>filters</Filter>
+    </ClCompile>
+    <ClCompile Include="math\FFT.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="math\CustomFilter.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="math\WindowedSincFilter.cpp">
+      <Filter>math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -80,16 +87,24 @@
     <ClInclude Include="GuCommon\SentenceManager.h">
       <Filter>gucommon\text</Filter>
     </ClInclude>
-    <ClInclude Include="Tuner.h" />
-    <ClInclude Include="Hertz.h" />
     <ClInclude Include="sdr\SdrBuffer.h">
       <Filter>sdr</Filter>
     </ClInclude>
-    <ClInclude Include="FilterBase.h">
+    <ClInclude Include="filters\IQSpectrum.h">
       <Filter>filters</Filter>
     </ClInclude>
-    <ClInclude Include="IQSpectrum.h">
-      <Filter>filters</Filter>
+    <ClInclude Include="filtesr\FilterBase.h" />
+    <ClInclude Include="math\FFT.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\CustomFilter.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Constants.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\WindowedSincFilter.h">
+      <Filter>math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -122,6 +137,9 @@
     </Filter>
     <Filter Include="filters">
       <UniqueIdentifier>{836010b6-62ad-451d-aa91-0d3f76ec2a49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="math">
+      <UniqueIdentifier>{4897884c-bac8-4c05-b81d-d3367a493522}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

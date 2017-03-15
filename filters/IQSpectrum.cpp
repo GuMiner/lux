@@ -1,35 +1,29 @@
+#include <algorithm>
 #include "IQSpectrum.h"
 
-
-
 IQSpectrum::IQSpectrum(SdrBuffer* dataBuffer) 
-    : FilterBase(dataBuffer)
+    : windowedSincFilter(), FilterBase(dataBuffer)
 {
 }
 
-// Let's see the IQ graph only within a 3.71 kHz bandwidth. With our current sample rate of 2.4 MHz, we will decimate 647 samples for 1 sample of data.
+// Let's see the IQ graph only within a 3.71 kHz bandwidth. With our current sample rate of 2.4 MHz, we will decimate 648 samples for 1 sample of data.
 void IQSpectrum::FormDecimator()
 {
-    const float pi = 3.141592653589f;
-    const float cutoffFrequency = 3710.0f;
-    const int decimationAmount = 647;
-
-    decimationFactors.reserve(647);
-    for (int i = 0; i < decimationAmount; i++)
+    windowedSincFilter.CreateFilter(3710, 648);
+    float sum = 0;
+    for (unsigned int i = 0; i < windowedSincFilter.kernel.size(); i++)
     {
-        int j = i - decimationAmount / 2;
-        float factor = j == 0 ? 1.0f : (std::sin(2 * pi * cutoffFrequency * j) / (j * pi));
-        decimationFactors.push_back(factor);
-
-        // TODO make a filter display pane, a common filter logic engine / former, etc.
+        // TODO make a filter display pane that takes CustomFilter types for display.
         float offsetX = -10.0f;
         float offsetY = -6.0f;
         float zPos = -30.0f;
-        float xEffective = offsetX + ((float)i / (float)decimationAmount) * 8.0f;
-
-        filterData.positionBuffer.vertices.push_back(glm::vec3(xEffective, offsetY + factor * 4.0f, zPos));
+        float xEffective = offsetX + ((float)i / (float)windowedSincFilter.kernel.size()) * 8.0f;
+        Logger::Log("value: ", windowedSincFilter.kernel[i]);
+        filterData.positionBuffer.vertices.push_back(glm::vec3(xEffective, offsetY + windowedSincFilter.kernel[i] * 4.0f, zPos));
         filterData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 1.0f, 0.0f));
     }
+
+    Logger::Log("Formed windowed sinc filter for future decimation.");
 }
 
 bool IQSpectrum::LoadGraphics(ShaderFactory* shaderFactory)
@@ -66,23 +60,25 @@ bool IQSpectrum::LoadGraphics(ShaderFactory* shaderFactory)
 
     borderData.positionBuffer.Initialize();
     borderData.colorBuffer.Initialize();
-    borderData.positionBuffer.vertices.push_back(glm::vec3(-6.0f, -6.0f, -30.0f));
-    borderData.positionBuffer.vertices.push_back(glm::vec3(-6.0f, 6.0f, -30.0f));
+    float displayScale = 6.1f;
+    float displayXOffset = 3.0f;
+    borderData.positionBuffer.vertices.push_back(glm::vec3(-displayScale + displayXOffset, -displayScale, -30.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(-displayScale + displayXOffset, displayScale, -30.0f));
     borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
     borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
 
-    borderData.positionBuffer.vertices.push_back(glm::vec3(-6.0f, -6.0f, -30.0f));
-    borderData.positionBuffer.vertices.push_back(glm::vec3(6.0f, -6.0f, -30.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(-displayScale + displayXOffset, -displayScale, -30.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(displayScale + displayXOffset, -displayScale, -30.0f));
     borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
     borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
 
-    borderData.positionBuffer.vertices.push_back(glm::vec3(-6.0f, 6.0f, -30.0f));
-    borderData.positionBuffer.vertices.push_back(glm::vec3(6.0f, 6.0f, -30.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(-displayScale + displayXOffset, displayScale, -30.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(displayScale + displayXOffset, displayScale, -30.0f));
     borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
     borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
 
-    borderData.positionBuffer.vertices.push_back(glm::vec3(6.0f, -6.0f, -30.0f));
-    borderData.positionBuffer.vertices.push_back(glm::vec3(6.0f, 6.0f, -30.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(displayScale + displayXOffset, -displayScale, -30.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(displayScale + displayXOffset, displayScale, -30.0f));
     borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
     borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
 
@@ -96,27 +92,34 @@ void IQSpectrum::Process(std::vector<unsigned char>* block)
     Logger::Log("Processing block of ", block->size(), " elements in filter '", GetName(), "'.");
 
     // Displays the IQ spectrum flattened on the XY plane.
-    float scale = (1.0f / 127.5f) * 6.0f;
-    float offsetX = 0.0f;
+    float displayScale = 6.0f;
+    float scale = (1.0f / 127.5f) * displayScale;
+    float offsetX = 3.0f;
     float offsetY = 0.0f;
     float zPos = -30.0f;
 
     graphicsUpdateLock.lock();
     spectrumData.positionBuffer.vertices.clear();
     spectrumData.colorBuffer.vertices.clear();
-    for (unsigned int n = 0; n < block->size() - decimationFactors.size() * 2; n += decimationFactors.size() * 2) // n < block->size() / 2; n++)
+    Logger::Log("Size block:", block->size(), " decimator:", windowedSincFilter.kernel.size(), ".");
+    for (unsigned int n = 0; n < block->size() - windowedSincFilter.kernel.size() * 2; n += windowedSincFilter.kernel.size() * 2) // n < block->size() / 2; n++)
     {
         // TODO determine how to properly decimate IQ signals.
         // TODO this leads to discontinuities at edges. We should grab two buffers and process that to avoid boundary problems.
         float i = 0;
         float q = 0;
-        for (int m = 0; m < decimationFactors.size(); m++)
+        for (unsigned int m = 0; m < windowedSincFilter.kernel.size(); m++)
         {
             // TODO there are weird artefacts using these decimation factors (scaling & descaling).s
-            i += ((float)(*block)[(n + m) * 2] - 127.5f) * scale * decimationFactors[m];
-            q += ((float)(*block)[(n + m) * 2 + 1] - 127.5f) * scale * decimationFactors[m];
+            i += ((float)(*block)[(n + m) * 2] - 127.5f) * scale * windowedSincFilter.kernel[m];
+            q += ((float)(*block)[(n + m) * 2 + 1] - 127.5f) * scale * windowedSincFilter.kernel[m];
         }
         
+        i = std::max(i, -displayScale);
+        i = std::min(i, displayScale);
+        q = std::max(q, -displayScale);
+        q = std::min(q, displayScale);
+
         // i = ((float)(*block)[n * 2] - 127.5f) * scale;
         // q = ((float)(*block)[n * 2 + 1] - 127.5f) * scale;
 

@@ -19,25 +19,26 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="FilterBase.cpp" />
     <ClCompile Include="GraphicsSetup.cpp" />
     <ClCompile Include="GuCommon\logging\Logger.cpp" />
     <ClCompile Include="GuCommon\shaders\ShaderFactory.cpp" />
     <ClCompile Include="GuCommon\stb\stb_implementations.cpp" />
     <ClCompile Include="GuCommon\strings\StringUtils.cpp" />
     <ClCompile Include="GuCommon\text\SentenceManager.cpp" />
-    <ClCompile Include="Hertz.cpp" />
     <ClCompile Include="Input.cpp" />
-    <ClCompile Include="IQSpectrum.cpp" />
+    <ClCompile Include="filters\FilterBase.cpp" />
+    <ClCompile Include="filters\IQSpectrum.cpp" />
+    <ClCompile Include="math\FFT.cpp" />
+    <ClCompile Include="math\CustomFilter.cpp" />
     <ClCompile Include="Lux.cpp" />
+    <ClCompile Include="math\WindowedSincFilter.cpp" />
     <ClCompile Include="sdr\RtlSdrDllLoader.cpp" />
     <ClCompile Include="sdr\Sdr.cpp" />
     <ClCompile Include="sdr\SdrBuffer.cpp" />
-    <ClCompile Include="Tuner.cpp" />
     <ClCompile Include="Viewer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FilterBase.h" />
+    <ClInclude Include="filtesr\FilterBase.h" />
     <ClInclude Include="GraphicsSetup.h" />
     <ClInclude Include="GuCommon\data\TextDataTypes.h" />
     <ClInclude Include="GuCommon\logging\Logger.h" />
@@ -49,14 +50,16 @@
     <ClInclude Include="GuCommon\vertex\UvVbo.hpp" />
     <ClInclude Include="GuCommon\vertex\VboBase.hpp" />
     <ClInclude Include="GuCommon\vertex\VboHelper.hpp" />
-    <ClInclude Include="Hertz.h" />
+    <ClInclude Include="math\Constants.h" />
+    <ClInclude Include="math\FFT.h" />
+    <ClInclude Include="math\CustomFilter.h" />
     <ClInclude Include="Input.h" />
-    <ClInclude Include="IQSpectrum.h" />
+    <ClInclude Include="filters\IQSpectrum.h" />
     <ClInclude Include="Lux.h" />
+    <ClInclude Include="math\WindowedSincFilter.h" />
     <ClInclude Include="sdr\RtlSdrDllLoader.h" />
     <ClInclude Include="sdr\Sdr.h" />
     <ClInclude Include="sdr\SdrBuffer.h" />
-    <ClInclude Include="Tuner.h" />
     <ClInclude Include="version.h" />
     <ClInclude Include="Viewer.h" />
   </ItemGroup>

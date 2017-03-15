@@ -6,7 +6,7 @@
 #include <glm\gtc\quaternion.hpp>
 #include "shaders\ShaderFactory.h"
 #include "text\SentenceManager.h"
-#include "FilterBase.h"
+#include "filters\FilterBase.h"
 #include "sdr\Sdr.h"
 #include "sdr\SdrBuffer.h"
 #include "Viewer.h"

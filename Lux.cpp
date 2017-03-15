@@ -3,10 +3,9 @@
 #include <glm\gtc\matrix_transform.hpp>
 #include <SFML\System.hpp>
 #include "logging\Logger.h"
-#include "IQSpectrum.h"
+#include "filters\IQSpectrum.h"
 #include "Input.h"
 #include "GraphicsSetup.h"
-#include "Hertz.h"
 #include "version.h"
 #include "Lux.h"
 
@@ -52,9 +51,9 @@ bool Lux::Initialize()
     // Note we don't need to remove the device as deletion will handle that for us.
     Logger::Log("Open device: ", sdr.OpenDevice(0));
 
-    Logger::Log("Setting center frequency: ", sdr.SetCenterFrequency(0, Hertz(452,734,0).GetFrequency())); // 452, 734, 0 89,500,0
-    Logger::Log("Setting sampling rate to max w/o dropped packets: ", sdr.SetSampleRate(0, Hertz(2, 400, 0).GetFrequency()));
-    Logger::Log("Setting bandwidth to sampling rate to use quadrature sampling: ", sdr.SetTunerBandwidth(0, Hertz(2, 400, 0).GetFrequency()));
+    Logger::Log("Setting center frequency: ", sdr.SetCenterFrequency(0, 452734000)); // 452, 734, 0 89,500,0
+    Logger::Log("Setting sampling rate to max w/o dropped packets: ", sdr.SetSampleRate(0, 2400000));
+    Logger::Log("Setting bandwidth to sampling rate to use quadrature sampling: ", sdr.SetTunerBandwidth(0, 2400000));
     Logger::Log("Setting auto-gain: Tuner: ", sdr.SetTunerGainMode(0, false), " Internal: ", sdr.SetInternalAutoGain(0, true));
     dataBuffer.StartAcquisition();
 

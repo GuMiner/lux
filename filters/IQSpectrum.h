@@ -2,6 +2,7 @@
 #include "FilterBase.h"
 #include "GuCommon\vertex\PositionVbo.hpp"
 #include "GuCommon\vertex\ColorVbo.hpp"
+#include "math\WindowedSincFilter.h"
 
 struct PointSpectrumProgram
 {
@@ -39,7 +40,7 @@ class IQSpectrum : public FilterBase
     std::mutex graphicsUpdateLock;
 
     bool firstUpdate;
-    std::vector<float> decimationFactors;
+    WindowedSincFilter windowedSincFilter;
     void FormDecimator();
 
 public:
