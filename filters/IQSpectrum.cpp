@@ -102,7 +102,8 @@ void IQSpectrum::Process(std::vector<unsigned char>* block)
     spectrumData.positionBuffer.vertices.clear();
     spectrumData.colorBuffer.vertices.clear();
     Logger::Log("Size block:", block->size(), " decimator:", windowedSincFilter.kernel.size(), ".");
-    for (unsigned int n = 0; n < block->size() - windowedSincFilter.kernel.size() * 2; n += windowedSincFilter.kernel.size() * 2) // n < block->size() / 2; n++)
+    int samples = block->size() / 2;
+    for (unsigned int n = 0; n < samples - windowedSincFilter.kernel.size(); n += windowedSincFilter.kernel.size()) // n < block->size() / 2; n++)
     {
         // TODO determine how to properly decimate IQ signals.
         // TODO this leads to discontinuities at edges. We should grab two buffers and process that to avoid boundary problems.
