@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="filters\FrequencySpectrum.cpp" />
     <ClCompile Include="GraphicsSetup.cpp" />
     <ClCompile Include="GuCommon\logging\Logger.cpp" />
     <ClCompile Include="GuCommon\shaders\ShaderFactory.cpp" />
@@ -28,7 +29,7 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="filters\FilterBase.cpp" />
     <ClCompile Include="filters\IQSpectrum.cpp" />
-    <ClCompile Include="math\FFT.cpp" />
+    <ClCompile Include="math\FourierTransform.cpp" />
     <ClCompile Include="math\CustomFilter.cpp" />
     <ClCompile Include="Lux.cpp" />
     <ClCompile Include="math\WindowedSincFilter.cpp" />
@@ -38,7 +39,8 @@
     <ClCompile Include="Viewer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="filtesr\FilterBase.h" />
+    <ClInclude Include="filters\FilterBase.h" />
+    <ClInclude Include="filters\FrequencySpectrum.h" />
     <ClInclude Include="GraphicsSetup.h" />
     <ClInclude Include="GuCommon\data\TextDataTypes.h" />
     <ClInclude Include="GuCommon\logging\Logger.h" />
@@ -51,7 +53,7 @@
     <ClInclude Include="GuCommon\vertex\VboBase.hpp" />
     <ClInclude Include="GuCommon\vertex\VboHelper.hpp" />
     <ClInclude Include="math\Constants.h" />
-    <ClInclude Include="math\FFT.h" />
+    <ClInclude Include="math\FourierTransform.h" />
     <ClInclude Include="math\CustomFilter.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="filters\IQSpectrum.h" />

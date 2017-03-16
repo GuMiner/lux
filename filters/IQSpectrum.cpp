@@ -2,7 +2,7 @@
 #include "IQSpectrum.h"
 
 IQSpectrum::IQSpectrum(SdrBuffer* dataBuffer) 
-    : windowedSincFilter(), FilterBase(dataBuffer)
+    : firstUpdate(true), windowedSincFilter(), FilterBase(dataBuffer)
 {
 }
 
@@ -53,7 +53,6 @@ bool IQSpectrum::LoadGraphics(ShaderFactory* shaderFactory)
     filterData.colorBuffer.Initialize();
 
     FormDecimator();
-    firstUpdate = true;
 
     glGenVertexArrays(1, &borderData.vao);
     glBindVertexArray(borderData.vao);

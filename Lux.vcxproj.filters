@@ -35,13 +35,16 @@
     <ClCompile Include="filters\IQSpectrum.cpp">
       <Filter>filters</Filter>
     </ClCompile>
-    <ClCompile Include="math\FFT.cpp">
-      <Filter>math</Filter>
-    </ClCompile>
     <ClCompile Include="math\CustomFilter.cpp">
       <Filter>math</Filter>
     </ClCompile>
     <ClCompile Include="math\WindowedSincFilter.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="filters\FrequencySpectrum.cpp">
+      <Filter>filters</Filter>
+    </ClCompile>
+    <ClCompile Include="math\FourierTransform.cpp">
       <Filter>math</Filter>
     </ClCompile>
   </ItemGroup>
@@ -93,10 +96,6 @@
     <ClInclude Include="filters\IQSpectrum.h">
       <Filter>filters</Filter>
     </ClInclude>
-    <ClInclude Include="filtesr\FilterBase.h" />
-    <ClInclude Include="math\FFT.h">
-      <Filter>math</Filter>
-    </ClInclude>
     <ClInclude Include="math\CustomFilter.h">
       <Filter>math</Filter>
     </ClInclude>
@@ -104,6 +103,15 @@
       <Filter>math</Filter>
     </ClInclude>
     <ClInclude Include="math\WindowedSincFilter.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="filters\FilterBase.h">
+      <Filter>filters</Filter>
+    </ClInclude>
+    <ClInclude Include="filters\FrequencySpectrum.h">
+      <Filter>filters</Filter>
+    </ClInclude>
+    <ClInclude Include="math\FourierTransform.h">
       <Filter>math</Filter>
     </ClInclude>
   </ItemGroup>

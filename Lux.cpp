@@ -4,6 +4,7 @@
 #include <SFML\System.hpp>
 #include "logging\Logger.h"
 #include "filters\IQSpectrum.h"
+#include "filters\FrequencySpectrum.h"
 #include "Input.h"
 #include "GraphicsSetup.h"
 #include "version.h"
@@ -51,7 +52,7 @@ bool Lux::Initialize()
     // Note we don't need to remove the device as deletion will handle that for us.
     Logger::Log("Open device: ", sdr.OpenDevice(0));
 
-    Logger::Log("Setting center frequency: ", sdr.SetCenterFrequency(0, 452734000)); // 452, 734, 0 89,500,0
+    Logger::Log("Setting center frequency: ", sdr.SetCenterFrequency(0, 89500000)); // 452, 734, 0 89,500,0
     Logger::Log("Setting sampling rate to max w/o dropped packets: ", sdr.SetSampleRate(0, 2400000));
     Logger::Log("Setting bandwidth to sampling rate to use quadrature sampling: ", sdr.SetTunerBandwidth(0, 2400000));
     Logger::Log("Setting auto-gain: Tuner: ", sdr.SetTunerGainMode(0, false), " Internal: ", sdr.SetInternalAutoGain(0, true));
@@ -179,6 +180,7 @@ bool Lux::LoadGraphics()
     sentenceManager.UpdateSentence(dataSpeedSentenceId, "Speed: ", 22, glm::vec3(1.0f, 1.0f, 1.0f));
 
     filters.push_back(new IQSpectrum(&dataBuffer));
+    filters.push_back(new FrequencySpectrum(&dataBuffer));
     for (FilterBase* filter : filters)
     {
         if (!filter->LoadGraphics(&shaderFactory))
