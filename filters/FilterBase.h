@@ -42,7 +42,7 @@ class FilterBase
                     
                     Logger::Log("Filter '", GetName(), "' processing new block ID ", (int)localBlockId, ".");
                     this->Process(&currentBlock);
-
+                    
                     ++localBlockId;
                 }
 

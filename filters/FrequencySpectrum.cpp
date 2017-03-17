@@ -71,11 +71,7 @@ void FrequencySpectrum::Process(std::vector<unsigned char>* block)
     float offsetY = 0.0f;
     float zPos = -30.0f;
 
-    graphicsUpdateLock.lock();
-    spectrumData.positionBuffer.vertices.clear();
-    spectrumData.colorBuffer.vertices.clear();
-
-    unsigned int fftSize = 1024 * 2;
+    unsigned int fftSize = 32768 * 2;
     std::vector<unsigned char> fftBuffer;
     fftBuffer.reserve(fftSize); // 2 ^ 14. or 2.3 kHz Hz per frequency window.
 
@@ -90,15 +86,18 @@ void FrequencySpectrum::Process(std::vector<unsigned char>* block)
     std::vector<float> reals;
     std::vector<float> imags;
     auto startTime = std::chrono::high_resolution_clock::now();
-    FourierTransform::ComplexDFT(fftBuffer, reals, imags);
+    // FourierTransform::ComplexDFT(fftBuffer, reals, imags);
+    FourierTransform::ComplexFFT(fftBuffer, reals, imags);
     auto stopTime = std::chrono::high_resolution_clock::now();
     std::chrono::duration<float> time = (stopTime - startTime);
     Logger::Log("Performed a fourier transform of ", fftSize / 2, " complex elements in ", time.count(), " sec.");
 
     float minReal = std::numeric_limits<float>::max();
     float maxReal = std::numeric_limits<float>::min();
+    float avgReal = 0;
     float minImag = std::numeric_limits<float>::max();
     float maxImag = std::numeric_limits<float>::min();
+    float avgImag = 0;
     for (unsigned int i = 0; i < reals.size(); i++)
     {
         if (reals[i] < minReal)
@@ -111,6 +110,8 @@ void FrequencySpectrum::Process(std::vector<unsigned char>* block)
             maxReal = reals[i];
         }
 
+        avgReal += reals[i];
+
         if (imags[i] < minImag)
         {
             minImag = imags[i];
@@ -120,19 +121,30 @@ void FrequencySpectrum::Process(std::vector<unsigned char>* block)
         {
             maxImag = imags[i];
         }
-    }
-    Logger::Log("Min, Max -- Re: [", minReal, ", ", maxReal, "], Im: [", minImag, ", ", maxImag, "]");
 
-    float upscaleFactor = 4.0f;
+        avgImag += imags[i];
+    }
+
+    avgReal /= reals.size();
+    avgImag /= imags.size();
+    Logger::Log("Min, Max -- Re: [", minReal, ", ", maxReal, "], Im: [", minImag, ", ", maxImag, "]");
+    avgReal = (avgReal - minReal) / (maxReal - minReal);
+    avgImag = (avgImag - minImag) / (maxImag - minImag);
+
+    float upscaleFactor = 16.0f;
+
+    graphicsUpdateLock.lock();
+    spectrumData.positionBuffer.vertices.clear();
+    spectrumData.colorBuffer.vertices.clear();
 
     for (unsigned int i = 0; i < reals.size(); i++)
     {
         float xPosition = offsetX + ((float)i / (float)reals.size()) * 2.0f * (displayScale + 1.0f);
         float percentReal = (reals[i] - minReal) / (maxReal - minReal);
-        float yPositionReal = offsetY + percentReal * displayScale * upscaleFactor + 1.0f; // wiggle factor
+        float yPositionReal = offsetY + percentReal * displayScale * upscaleFactor + 1.0f - (avgReal * displayScale * upscaleFactor); // wiggle factor
 
         float percentImag = (imags[i] - minImag) / (maxImag - minImag);
-        float yPositionImag = offsetY + percentImag * displayScale * upscaleFactor - (displayScale);
+        float yPositionImag = offsetY + percentImag * displayScale * upscaleFactor - (displayScale) - (avgImag * displayScale * upscaleFactor);
 
         spectrumData.positionBuffer.vertices.push_back(glm::vec3(xPosition, yPositionReal, zPos));
         spectrumData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 1.0f, 0.0f));

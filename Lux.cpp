@@ -52,10 +52,11 @@ bool Lux::Initialize()
     // Note we don't need to remove the device as deletion will handle that for us.
     Logger::Log("Open device: ", sdr.OpenDevice(0));
 
-    Logger::Log("Setting center frequency: ", sdr.SetCenterFrequency(0, 89500000)); // 452, 734, 0 89,500,0
+    Logger::Log("Setting center frequency: ", sdr.SetCenterFrequency(0, 106100000)); // 452, 734, 0 89,500,0, 106,100,0
     Logger::Log("Setting sampling rate to max w/o dropped packets: ", sdr.SetSampleRate(0, 2400000));
     Logger::Log("Setting bandwidth to sampling rate to use quadrature sampling: ", sdr.SetTunerBandwidth(0, 2400000));
-    Logger::Log("Setting auto-gain: Tuner: ", sdr.SetTunerGainMode(0, false), " Internal: ", sdr.SetInternalAutoGain(0, true));
+    Logger::Log("Setting auto-gain off: Tuner: ", sdr.SetTunerGainMode(0, true), " Internal: ", sdr.SetInternalAutoGain(0, false));
+    Logger::Log("Setting gain of tuner: ", sdr.SetTunerGain(0, 4));
     dataBuffer.StartAcquisition();
 
     // Setup GLFW
@@ -82,11 +83,25 @@ void Lux::HandleEvents(bool& focusPaused, bool& escapePaused)
     escapePaused = Input::IsKeyTyped(GLFW_KEY_ESCAPE);
 }
 
+float aggregate = 0;
+int frames = 0;
 void Lux::Update(float currentTime, float frameTime)
 {
     std::stringstream speed;
     speed << "Rate: " << dataBuffer.GetCurrentSampleRate();
     sentenceManager.UpdateSentence(dataSpeedSentenceId, speed.str(), 22, glm::vec3(1.0f, 1.0f, 1.0f));
+
+    ++frames;
+    aggregate += frameTime;
+    if (aggregate > 1.0f)
+    {
+        std::stringstream framerate;
+        framerate << "FPS: " << (float)((float)frames / aggregate);
+        sentenceManager.UpdateSentence(sentenceId, framerate.str(), 16, glm::vec3(0.0f, 1.0f, 1.0f));
+
+        aggregate = 0;
+        frames = 0;
+    }
 }
 
 void Lux::Render(glm::mat4& viewMatrix)

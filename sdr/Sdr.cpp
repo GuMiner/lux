@@ -78,7 +78,7 @@ bool Sdr::OpenDevice(int deviceId)
     }
     Logger::Log("Received ", numberOfGainValues, " possible gain values.");
 
-    gains.reserve(numberOfGainValues);
+    gains.resize(numberOfGainValues, 0);
     if (rawLayer.get_tuner_gains(device, &gains[0]) <= 0)
     {
         Logger::Log("Couldn't get the tuner gain settings available!");
@@ -88,13 +88,13 @@ bool Sdr::OpenDevice(int deviceId)
     std::stringstream possibleGainValues;
     for (unsigned int i = 0; i < gains.size(); i++)
     {
-        possibleGainValues << i;
+        possibleGainValues << gains[i];
         if (i != gains.size() - 1)
         {
             possibleGainValues << ", ";
         }
     }
-    Logger::Log("Possible gain values are: ", possibleGainValues.str());
+    Logger::Log("Possible gain values are: ", possibleGainValues.str().c_str());
 
     loadedDevices[deviceId] = DeviceDetails(device, gains);
     return true;
