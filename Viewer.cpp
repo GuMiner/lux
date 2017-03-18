@@ -44,11 +44,11 @@ float Viewer::GetUnitsPerPixel() const
     }
     else
     {
-        pixels = ScreenHeight;
         visibleScreenDist = GetYSize();
+        pixels = ScreenHeight;
     }
 
-    return visibleScreenDist / pixels;
+    return visibleScreenDist / (float)pixels;
 }
 
 glm::vec2 Viewer::GetGridPos(glm::ivec2 screenPos) const
@@ -81,14 +81,14 @@ float Viewer::GetXSize() const
 {
     // NOTE: We're assuming we're always on the Z axis.
     float distToXYPlane = target.z - position.z;
-    return (2.0f * aspectRatio * distToXYPlane) / std::cos(glm::radians(fovY / 2.0f));
+    return (2.0f * aspectRatio * distToXYPlane) * std::tan(glm::radians(fovY / 2.0f));
 }
 
 float Viewer::GetYSize() const
 {
     // NOTE: We're assuming we're always on the Z axis.
     float distToXYPlane = target.z - position.z;
-    return 2.0f * distToXYPlane / std::cos(glm::radians(fovY / 2.0f));
+    return (2.0f * distToXYPlane) * std::tan(glm::radians(fovY / 2.0f));
 }
 
 float Viewer::GetAspectRatio() const
