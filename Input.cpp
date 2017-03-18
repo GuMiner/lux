@@ -35,7 +35,6 @@ void Input::Setup(GLFWwindow* window, Viewer* viewer)
 // Logs any errors from GLFW
 void Input::LogGlfwErrors(int error, const char* description)
 {
-    std::cout << error << " " << description << std::endl;
     Logger::LogError("Error code: ", error, ". Description: ", description);
 }
 

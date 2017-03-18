@@ -307,7 +307,7 @@ bool Lux::Run()
 
 int main()
 {
-    Logger::Setup("lux-log.log");
+    Logger::Setup("lux-log.log", true);
     Logger::Log("Lux ", AutoVersion::MAJOR_VERSION, ".", AutoVersion::MINOR_VERSION);
 
     Lux* lux = new Lux();
