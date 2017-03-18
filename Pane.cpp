@@ -6,7 +6,7 @@ Pane::Pane(glm::vec2 position, glm::vec2 size, Viewer* viewer, SentenceManager* 
 {
     titleSentenceId = sentenceManager->CreateNewSentence();
     paneColor = glm::vec3(0.145f, 0.758f, 0.344f);
-    // sentenceManager->UpdateSentence(titleSentenceId, paneContents->GetTitle(), 22, paneColor);
+    sentenceManager->UpdateSentence(titleSentenceId, paneContents->GetTitle(), 28, paneColor);
 
     borderRenderer.Clear();
     borderRenderer.AddXYRectangle(glm::vec3(position.x, position.y, 0.0f), size, paneColor);
@@ -18,7 +18,7 @@ void Pane::Update(float elapsedTime, float frameTime)
     if (paneContents->HasTitleUpdate())
     {
         // Get and update title.
-        sentenceManager->UpdateSentence(titleSentenceId, paneContents->GetTitle(), 22, paneColor);
+        sentenceManager->UpdateSentence(titleSentenceId, paneContents->GetTitle(), 28, paneColor);
     }
 
     // TODO manage input to move the pane around the screen.
@@ -30,8 +30,9 @@ void Pane::Render(glm::mat4& projectionMatrix, glm::mat4& perspectiveMatrix, glm
 {
     borderRenderer.Render(projectionMatrix);
 
-    glm::mat4 mouseToolTipMatrix = glm::scale(glm::mat4(), glm::vec3(0.042f, 0.042f, 0.042f)) * glm::translate(glm::mat4(), glm::vec3(position.x, position.y + size.y, 0.0f)) * viewMatrix;
-    sentenceManager->RenderSentence(titleSentenceId, perspectiveMatrix, mouseToolTipMatrix);
+    float scaleDown = 0.50f;
+    glm::mat4 titleSentenceMatrix = glm::translate(glm::mat4(), glm::vec3(position.x, position.y + size.y + 0.4f, 0.0f)) * viewMatrix;
+    sentenceManager->RenderSentence(titleSentenceId, perspectiveMatrix, titleSentenceMatrix);
 
     float borderSize = viewer->GetUnitsPerPixel();
     paneContents->Render(projectionMatrix, position + glm::vec2(borderSize, borderSize), size - glm::vec2(borderSize * 2, borderSize * 2));

@@ -27,9 +27,13 @@ class Lux
     Pane* fourierTransformPane;
     // FilterBase* iqFilter;
     
-    int sentenceId;
+    float fpsTimeAggregated;
+    int fpsFramesCounted;
+    int fpsSentenceId;
     int dataSpeedSentenceId;
     int mouseToolTipSentenceId;
+
+    void UpdateFps(float frameTime);
 
     bool LoadCoreGlslGraphics();
     void LogSystemSetup();

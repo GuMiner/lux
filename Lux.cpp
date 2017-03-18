@@ -1,6 +1,6 @@
 #include <sstream>
 #include <string>
-#include <glm\gtc\matrix_transform.hpp>
+#include <glm\gtx\transform.hpp>
 #include <SFML\System.hpp>
 #include "logging\Logger.h"
 #include "filters\IQSpectrum.h"
@@ -19,7 +19,8 @@
 
 Lux::Lux() 
     : shaderFactory(), sentenceManager(), viewer(),
-      sdr(), dataBuffer(&sdr, 0, 30) // TODO config somewhere, with device ID passed in somewhere else
+      sdr(), dataBuffer(&sdr, 0, 30), // TODO config somewhere, with device ID passed in somewhere else
+      fpsTimeAggregated(0.0f), fpsFramesCounted(0)
 {
 }
 
@@ -157,10 +158,23 @@ void Lux::HandleEvents(bool& focusPaused, bool& escapePaused)
     escapePaused = Input::IsKeyTyped(GLFW_KEY_ESCAPE);
 }
 
+void Lux::UpdateFps(float frameTime)
+{
+    ++fpsFramesCounted;
+    fpsTimeAggregated += frameTime;
+    if (fpsTimeAggregated > 1.0f)
+    {
+        std::stringstream framerate;
+        framerate << "FPS: " << (float)((float)fpsFramesCounted / fpsTimeAggregated);
+        sentenceManager.UpdateSentence(fpsSentenceId, framerate.str(), 22, glm::vec3(0.0f, 1.0f, 1.0f));
+
+        fpsTimeAggregated = 0;
+        fpsFramesCounted = 0;
+    }
+}
+
 // TODO hacky code to remove with a redesign. Still prototyping here...
 int gainId = 0;
-float aggregate = 0;
-int frames = 0;
 void Lux::Update(float currentTime, float frameTime)
 {
     viewer.Update(frameTime);
@@ -174,18 +188,8 @@ void Lux::Update(float currentTime, float frameTime)
     speed << "Rate: " << dataBuffer.GetCurrentSampleRate();
     sentenceManager.UpdateSentence(dataSpeedSentenceId, speed.str(), 22, glm::vec3(1.0f, 1.0f, 1.0f));
 
-    ++frames;
-    aggregate += frameTime;
-    if (aggregate > 1.0f)
-    {
-        std::stringstream framerate;
-        framerate << "FPS: " << (float)((float)frames / aggregate);
-        sentenceManager.UpdateSentence(sentenceId, framerate.str(), 16, glm::vec3(0.0f, 1.0f, 1.0f));
-
-        aggregate = 0;
-        frames = 0;
-    }
-
+    UpdateFps(frameTime);
+    
     if (Input::IsKeyTyped(GLFW_KEY_UP))
     {
         ++gainId;
@@ -213,16 +217,13 @@ void Lux::Render(glm::mat4& viewMatrix)
     glClearBufferfv(GL_COLOR, 0, color);
     glClearBufferfv(GL_DEPTH, 0, &one);
 
-    // TODO render something interesting.
-    glm::mat4 sentenceTestMatrix = glm::scale(glm::translate(glm::mat4(), glm::vec3(-0.821f, -0.121f, 0.0f)), glm::vec3(0.022f, 0.022f, 0.02f)) * viewMatrix;
-    sentenceManager.RenderSentence(sentenceId, viewer.perspectiveMatrix, sentenceTestMatrix);
+    // Render the FPS and our current data transfer rate in the upper-left corner.
+    sentenceManager.RenderSentence(fpsSentenceId, viewer.perspectiveMatrix, glm::translate(glm::vec3(-viewer.GetXSize() / 2.0f, viewer.GetYSize() / 2.0f - 2.0f, 0.0f)) * viewMatrix);
+    sentenceManager.RenderSentence(dataSpeedSentenceId, viewer.perspectiveMatrix, glm::translate(glm::vec3(-viewer.GetXSize() / 2.0f, viewer.GetYSize() / 2.0f - 1.0f, 0.0f)) * viewMatrix);
 
-    sentenceTestMatrix = glm::scale(glm::translate(glm::mat4(), glm::vec3(-0.821f, -0.091f, 0.0f)), glm::vec3(0.022f, 0.022f, 0.02f)) * viewMatrix;
-    sentenceManager.RenderSentence(dataSpeedSentenceId, viewer.perspectiveMatrix, sentenceTestMatrix);
-
+    // Render our mouse tool tip ... at the mouse
     glm::vec2 screenPos = viewer.GetGridPos(Input::GetMousePos());
-    glm::mat4 mouseToolTipMatrix = glm::scale(glm::mat4(), glm::vec3(0.042f, 0.042f, 0.042f)) * glm::translate(glm::mat4(), glm::vec3(screenPos.x, screenPos.y, 0.0f)) * viewMatrix;
-    sentenceManager.RenderSentence(mouseToolTipSentenceId, viewer.perspectiveMatrix, mouseToolTipMatrix);
+    sentenceManager.RenderSentence(mouseToolTipSentenceId, viewer.perspectiveMatrix, glm::translate(glm::vec3(screenPos.x, screenPos.y, 0.0f)) * viewMatrix);
 
     // Render all our filters.
     // iqFilter->Render(projectionMatrix); // render the IQ one only.
@@ -243,8 +244,8 @@ bool Lux::LoadGraphics()
     }
 
     // TODO test code remove
-    sentenceId = sentenceManager.CreateNewSentence();
-    sentenceManager.UpdateSentence(sentenceId, "Test string 123456789-10!", 22, glm::vec3(1.0f, 1.0f, 1.0f));
+    fpsSentenceId = sentenceManager.CreateNewSentence();
+    sentenceManager.UpdateSentence(fpsSentenceId, "Test string 123456789-10!", 22, glm::vec3(1.0f, 1.0f, 1.0f));
 
     dataSpeedSentenceId = sentenceManager.CreateNewSentence();
     sentenceManager.UpdateSentence(dataSpeedSentenceId, "Speed: ", 22, glm::vec3(1.0f, 1.0f, 1.0f));
