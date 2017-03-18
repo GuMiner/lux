@@ -18,9 +18,16 @@ class Pane
     IPaneRenderable* paneContents;
 
     // GUI of the pane
+    float titleOffset;
     int titleSentenceId;
     glm::vec3 paneColor;
     LineRenderer borderRenderer;
+
+    void UpdatePaneBorders();
+
+    bool dragging;
+    glm::vec2 clickOffset; // The offset the user clicked the title in comparison to where the pane is.
+    bool HasClickedTitle();
 
 public:
     Pane(glm::vec2 position, glm::vec2 size, Viewer* viewer, SentenceManager* sentenceManager, IPaneRenderable* paneContents);

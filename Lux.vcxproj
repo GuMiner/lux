@@ -47,7 +47,7 @@
     <ClInclude Include="GuCommon\logging\Logger.h" />
     <ClInclude Include="GuCommon\shaders\ShaderFactory.h" />
     <ClInclude Include="GuCommon\strings\StringUtils.h" />
-    <ClInclude Include="GuCommon\SentenceManager.h" />
+    <ClInclude Include="GuCommon\text\SentenceManager.h" />
     <ClInclude Include="GuCommon\vertex\ColorVbo.hpp" />
     <ClInclude Include="GuCommon\vertex\PositionVbo.hpp" />
     <ClInclude Include="GuCommon\vertex\UvVbo.hpp" />

@@ -94,9 +94,6 @@
       <Filter>gucommon\vertex</Filter>
     </ClInclude>
     <ClInclude Include="Viewer.h" />
-    <ClInclude Include="GuCommon\SentenceManager.h">
-      <Filter>gucommon\text</Filter>
-    </ClInclude>
     <ClInclude Include="sdr\SdrBuffer.h">
       <Filter>sdr</Filter>
     </ClInclude>
@@ -132,6 +129,9 @@
     </ClInclude>
     <ClInclude Include="PointRenderer.h">
       <Filter>renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="GuCommon\text\SentenceManager.h">
+      <Filter>gucommon\text</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

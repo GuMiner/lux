@@ -166,7 +166,7 @@ void Lux::UpdateFps(float frameTime)
     {
         std::stringstream framerate;
         framerate << "FPS: " << (float)((float)fpsFramesCounted / fpsTimeAggregated);
-        sentenceManager.UpdateSentence(fpsSentenceId, framerate.str(), 22, glm::vec3(0.0f, 1.0f, 1.0f));
+        sentenceManager.UpdateSentence(fpsSentenceId, framerate.str());
 
         fpsTimeAggregated = 0;
         fpsFramesCounted = 0;
@@ -182,11 +182,11 @@ void Lux::Update(float currentTime, float frameTime)
     glm::vec2 screenPos = viewer.GetGridPos(Input::GetMousePos());
     std::stringstream mousePos;
     mousePos << screenPos.x << ", " << screenPos.y;
-    sentenceManager.UpdateSentence(mouseToolTipSentenceId, mousePos.str(), 22, glm::vec3(1.0f, 1.0f, 0.0f));
+    sentenceManager.UpdateSentence(mouseToolTipSentenceId, mousePos.str());
 
     std::stringstream speed;
     speed << "Rate: " << dataBuffer.GetCurrentSampleRate();
-    sentenceManager.UpdateSentence(dataSpeedSentenceId, speed.str(), 22, glm::vec3(1.0f, 1.0f, 1.0f));
+    sentenceManager.UpdateSentence(dataSpeedSentenceId, speed.str());
 
     UpdateFps(frameTime);
     
@@ -218,8 +218,10 @@ void Lux::Render(glm::mat4& viewMatrix)
     glClearBufferfv(GL_DEPTH, 0, &one);
 
     // Render the FPS and our current data transfer rate in the upper-left corner.
-    sentenceManager.RenderSentence(fpsSentenceId, viewer.perspectiveMatrix, glm::translate(glm::vec3(-viewer.GetXSize() / 2.0f, viewer.GetYSize() / 2.0f - 2.0f, 0.0f)) * viewMatrix);
-    sentenceManager.RenderSentence(dataSpeedSentenceId, viewer.perspectiveMatrix, glm::translate(glm::vec3(-viewer.GetXSize() / 2.0f, viewer.GetYSize() / 2.0f - 1.0f, 0.0f)) * viewMatrix);
+    float dataSpeedHeight = sentenceManager.GetSentenceDimensions(dataSpeedSentenceId).y;
+    float fpsHeight = sentenceManager.GetSentenceDimensions(fpsSentenceId).y;
+    sentenceManager.RenderSentence(fpsSentenceId, viewer.perspectiveMatrix, glm::translate(glm::vec3(-viewer.GetXSize() / 2.0f, viewer.GetYSize() / 2.0f - (dataSpeedHeight + fpsHeight), 0.0f)) * viewMatrix);
+    sentenceManager.RenderSentence(dataSpeedSentenceId, viewer.perspectiveMatrix, glm::translate(glm::vec3(-viewer.GetXSize() / 2.0f, viewer.GetYSize() / 2.0f - dataSpeedHeight, 0.0f)) * viewMatrix);
 
     // Render our mouse tool tip ... at the mouse
     glm::vec2 screenPos = viewer.GetGridPos(Input::GetMousePos());
@@ -245,13 +247,13 @@ bool Lux::LoadGraphics()
 
     // TODO test code remove
     fpsSentenceId = sentenceManager.CreateNewSentence();
-    sentenceManager.UpdateSentence(fpsSentenceId, "Test string 123456789-10!", 22, glm::vec3(1.0f, 1.0f, 1.0f));
+    sentenceManager.UpdateSentence(fpsSentenceId, "FPS:", 14, glm::vec3(1.0f, 1.0f, 1.0f));
 
     dataSpeedSentenceId = sentenceManager.CreateNewSentence();
-    sentenceManager.UpdateSentence(dataSpeedSentenceId, "Speed: ", 22, glm::vec3(1.0f, 1.0f, 1.0f));
+    sentenceManager.UpdateSentence(dataSpeedSentenceId, "Speed: ", 14, glm::vec3(1.0f, 1.0f, 1.0f));
 
     mouseToolTipSentenceId = sentenceManager.CreateNewSentence();
-    sentenceManager.UpdateSentence(mouseToolTipSentenceId, "(?,?)", 22, glm::vec3(1.0f, 1.0f, 1.0f));
+    sentenceManager.UpdateSentence(mouseToolTipSentenceId, "(?,?)", 12, glm::vec3(1.0f, 1.0f, 1.0f));
 
     glm::vec2 panePos = glm::vec2(-30.0f, -30.0f);
     glm::vec2 paneSize = glm::vec2(60.0f, 60.0f);
