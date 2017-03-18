@@ -6,7 +6,6 @@
 #include "filters\IQSpectrum.h"
 #include "filters\FrequencySpectrum.h"
 #include "Input.h"
-#include "GraphicsSetup.h"
 #include "version.h"
 #include "Lux.h"
 
@@ -56,7 +55,7 @@ bool Lux::Initialize()
     Logger::Log("Setting sampling rate to max w/o dropped packets: ", sdr.SetSampleRate(0, 2400000));
     Logger::Log("Setting bandwidth to sampling rate to use quadrature sampling: ", sdr.SetTunerBandwidth(0, 2400000));
     Logger::Log("Setting auto-gain off: Tuner: ", sdr.SetTunerGainMode(0, true), " Internal: ", sdr.SetInternalAutoGain(0, false));
-    Logger::Log("Setting gain of tuner: ", sdr.SetTunerGain(0, 4));
+    Logger::Log("Setting gain of tuner: ", sdr.SetTunerGain(0, 0));
     dataBuffer.StartAcquisition();
 
     // Setup GLFW
@@ -83,10 +82,19 @@ void Lux::HandleEvents(bool& focusPaused, bool& escapePaused)
     escapePaused = Input::IsKeyTyped(GLFW_KEY_ESCAPE);
 }
 
+// TODO hacky code to remove with a redesign. Still prototyping here...
+int gainId = 0;
 float aggregate = 0;
 int frames = 0;
 void Lux::Update(float currentTime, float frameTime)
 {
+    viewer.Update(frameTime);
+    
+    glm::vec2 screenPos = viewer.GetGridPos(Input::GetMousePos());
+    std::stringstream mousePos;
+    mousePos << screenPos.x << ", " << screenPos.y;
+    sentenceManager.UpdateSentence(mouseToolTipSentenceId, mousePos.str(), 22, glm::vec3(1.0f, 1.0f, 0.0f));
+
     std::stringstream speed;
     speed << "Rate: " << dataBuffer.GetCurrentSampleRate();
     sentenceManager.UpdateSentence(dataSpeedSentenceId, speed.str(), 22, glm::vec3(1.0f, 1.0f, 1.0f));
@@ -102,11 +110,24 @@ void Lux::Update(float currentTime, float frameTime)
         aggregate = 0;
         frames = 0;
     }
+
+    if (Input::IsKeyTyped(GLFW_KEY_UP))
+    {
+        ++gainId;
+        gainId = std::min((int)sdr.GetTunerGainSettings(0).size() - 1, gainId);
+        Logger::Log("Setting gain of tuner to ID ", gainId, ": ", sdr.SetTunerGain(0, gainId));
+    }
+    else if (Input::IsKeyTyped(GLFW_KEY_DOWN))
+    {
+        --gainId;
+        gainId = std::max(gainId, 0);
+        Logger::Log("Setting gain of tuner to ID ", gainId, ": ", sdr.SetTunerGain(0, gainId));
+    }
 }
 
 void Lux::Render(glm::mat4& viewMatrix)
 {
-    glm::mat4 projectionMatrix = GraphicsSetup::PerspectiveMatrix * viewMatrix;
+    glm::mat4 projectionMatrix = viewer.perspectiveMatrix * viewMatrix;
 
     // Clear the screen (and depth buffer) before any rendering begins.
     const GLfloat color[] = { 0, 0, 0, 1 };
@@ -115,11 +136,15 @@ void Lux::Render(glm::mat4& viewMatrix)
     glClearBufferfv(GL_DEPTH, 0, &one);
 
     // TODO render something interesting.
-    glm::mat4 sentenceTestMatrix = glm::scale(glm::translate(glm::mat4(), glm::vec3(-0.821f, -0.121f, -1.0f)), glm::vec3(0.022f, 0.022f, 0.02f));
-    sentenceManager.RenderSentence(sentenceId, GraphicsSetup::PerspectiveMatrix, sentenceTestMatrix);
+    glm::mat4 sentenceTestMatrix = glm::scale(glm::translate(glm::mat4(), glm::vec3(-0.821f, -0.121f, 0.0f)), glm::vec3(0.022f, 0.022f, 0.02f)) * viewMatrix;
+    sentenceManager.RenderSentence(sentenceId, viewer.perspectiveMatrix, sentenceTestMatrix);
 
-    sentenceTestMatrix = glm::scale(glm::translate(glm::mat4(), glm::vec3(-0.821f, -0.091f, -1.0f)), glm::vec3(0.022f, 0.022f, 0.02f));
-    sentenceManager.RenderSentence(dataSpeedSentenceId, GraphicsSetup::PerspectiveMatrix, sentenceTestMatrix);
+    sentenceTestMatrix = glm::scale(glm::translate(glm::mat4(), glm::vec3(-0.821f, -0.091f, 0.0f)), glm::vec3(0.022f, 0.022f, 0.02f)) * viewMatrix;
+    sentenceManager.RenderSentence(dataSpeedSentenceId, viewer.perspectiveMatrix, sentenceTestMatrix);
+
+    glm::vec2 screenPos = viewer.GetGridPos(Input::GetMousePos());
+    glm::mat4 mouseToolTipMatrix = glm::scale(glm::mat4(), glm::vec3(0.042f, 0.042f, 0.042f)) * glm::translate(glm::mat4(), glm::vec3(screenPos.x, screenPos.y, 0.0f)) * viewMatrix;
+    sentenceManager.RenderSentence(mouseToolTipSentenceId, viewer.perspectiveMatrix, mouseToolTipMatrix);
 
     // Render all our filters.
     for (FilterBase* filter : filters)
@@ -138,7 +163,7 @@ bool Lux::LoadGraphics()
     glfwWindowHint(GLFW_SAMPLES, 8);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    window = glfwCreateWindow(GraphicsSetup::ScreenWidth, GraphicsSetup::ScreenHeight, "Lux", nullptr, nullptr);
+    window = glfwCreateWindow(viewer.ScreenWidth, viewer.ScreenHeight, "Lux", nullptr, nullptr);
     if (!window)
     {
         Logger::LogError("Could not create the GLFW window!");
@@ -147,7 +172,7 @@ bool Lux::LoadGraphics()
 
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
-    Input::Setup(window, GraphicsSetup::ScreenWidth, GraphicsSetup::ScreenHeight);
+    Input::Setup(window, &viewer);
 
     // Setup GLEW
     GLenum err = glewInit();
@@ -193,6 +218,9 @@ bool Lux::LoadGraphics()
 
     dataSpeedSentenceId = sentenceManager.CreateNewSentence();
     sentenceManager.UpdateSentence(dataSpeedSentenceId, "Speed: ", 22, glm::vec3(1.0f, 1.0f, 1.0f));
+
+    mouseToolTipSentenceId = sentenceManager.CreateNewSentence();
+    sentenceManager.UpdateSentence(mouseToolTipSentenceId, "(?,?)", 22, glm::vec3(1.0f, 1.0f, 1.0f));
 
     filters.push_back(new IQSpectrum(&dataBuffer));
     filters.push_back(new FrequencySpectrum(&dataBuffer));
@@ -244,7 +272,7 @@ bool Lux::Run()
         }
 
         // Delay to run approximately at our maximum framerate.
-        sf::Int64 sleepDelay = ((long)1e6 / GraphicsSetup::MaxFramerate) - (long)(frameTime * 1e6);
+        sf::Int64 sleepDelay = ((long)1e6 / viewer.MaxFramerate) - (long)(frameTime * 1e6);
         if (sleepDelay > 0)
         {
             sf::sleep(sf::microseconds(sleepDelay));

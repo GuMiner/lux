@@ -3,7 +3,6 @@
   <ItemGroup>
     <ClCompile Include="Lux.cpp" />
     <ClCompile Include="Input.cpp" />
-    <ClCompile Include="GraphicsSetup.cpp" />
     <ClCompile Include="sdr\RtlSdrDllLoader.cpp">
       <Filter>sdr</Filter>
     </ClCompile>
@@ -47,12 +46,12 @@
     <ClCompile Include="math\FourierTransform.cpp">
       <Filter>math</Filter>
     </ClCompile>
+    <ClCompile Include="Pane.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lux.h" />
     <ClInclude Include="version.h" />
     <ClInclude Include="Input.h" />
-    <ClInclude Include="GraphicsSetup.h" />
     <ClInclude Include="sdr\RtlSdrDllLoader.h">
       <Filter>sdr</Filter>
     </ClInclude>
@@ -114,6 +113,8 @@
     <ClInclude Include="math\FourierTransform.h">
       <Filter>math</Filter>
     </ClInclude>
+    <ClInclude Include="Pane.h" />
+    <ClInclude Include="IPaneRenderable.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="sdr">

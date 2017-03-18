@@ -1,10 +1,10 @@
 #include <iostream>
 #include "logging\Logger.h"
-#include "GraphicsSetup.h"
 #include "Input.h"
 
 bool Input::hasFocus = true;
 GLFWwindow* Input::window = nullptr;
+Viewer* Input::viewer = nullptr;
 
 std::set<int> Input::pressedKeys;
 std::set<int> Input::pressedKeysTypeChecked;
@@ -17,12 +17,13 @@ void Input::SetupErrorCallback()
     glfwSetErrorCallback(Input::LogGlfwErrors);
 }
 
-void Input::Setup(GLFWwindow* window, int width, int height)
+void Input::Setup(GLFWwindow* window, Viewer* viewer)
 {
     Input::window = window;
+    Input::viewer = viewer;
 
     // Call the resize callback initially to keep our viewport accurate.
-    Input::GlfwWindowResizeCallbacks(window, width, height);
+    Input::GlfwWindowResizeCallbacks(window, viewer->ScreenWidth, viewer->ScreenHeight);
 
     glfwSetKeyCallback(window, Input::GlfwKeyCallback);
     glfwSetWindowCloseCallback(window, Input::GlfwWindowCloseCallbacks);
@@ -48,7 +49,6 @@ void Input::GlfwKeyCallback(GLFWwindow* window, int key, int scancode, int actio
         switch (key)
         {
         case GLFW_KEY_ESCAPE:
-        case GLFW_KEY_Q:
             glfwSetWindowShouldClose(window, GLFW_TRUE);
             break;
         }
@@ -86,11 +86,11 @@ void Input::GlfwWindowFocusCallbacks(GLFWwindow* window, int focused)
 void Input::GlfwWindowResizeCallbacks(GLFWwindow* window, int width, int height)
 {
     // Letterboxing is done at the top and bottom.
-    float necessaryWidth = (float)height * GraphicsSetup::AspectRatio;
+    float necessaryWidth = (float)height * viewer->GetAspectRatio();
     if (necessaryWidth > width)
     {
         // Letterbox the top and the bottom of the screen so that the aspect ratio is met
-        float effectiveHeight = (float)width / GraphicsSetup::AspectRatio;
+        float effectiveHeight = (float)width / viewer->GetAspectRatio();
         float heightDelta = ((float)height - effectiveHeight) / 2.0f;
         glViewport(0, (int)heightDelta, (GLsizei)width, (GLsizei)effectiveHeight);
     }
@@ -100,6 +100,8 @@ void Input::GlfwWindowResizeCallbacks(GLFWwindow* window, int width, int height)
         float widthDelta = ((float)width - necessaryWidth) / 2.0f;
         glViewport((GLint)widthDelta, (GLint)0, (GLsizei)necessaryWidth, (GLsizei)height);
     }
+
+    viewer->SetScreenSize(width, height);
 }
 
 // Returns true if a key was pressed, false otherwise.

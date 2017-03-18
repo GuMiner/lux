@@ -25,6 +25,7 @@ class Lux
     std::vector<FilterBase*> filters;
     int sentenceId;
     int dataSpeedSentenceId;
+    int mouseToolTipSentenceId;
 
     void LogSystemSetup();
 

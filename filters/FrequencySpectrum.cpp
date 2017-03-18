@@ -36,23 +36,23 @@ bool FrequencySpectrum::LoadGraphics(ShaderFactory* shaderFactory)
     borderData.colorBuffer.Initialize();
     float displayScale = 6.0f;
     float displayXOffset = -10.0f;
-    borderData.positionBuffer.vertices.push_back(glm::vec3(-displayScale + displayXOffset, -displayScale, -30.0f));
-    borderData.positionBuffer.vertices.push_back(glm::vec3(-displayScale + displayXOffset, displayScale, -30.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(-displayScale + displayXOffset, -displayScale, 30.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(-displayScale + displayXOffset, displayScale, 30.0f));
     borderData.colorBuffer.vertices.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
     borderData.colorBuffer.vertices.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
 
-    borderData.positionBuffer.vertices.push_back(glm::vec3(-displayScale + displayXOffset, -displayScale, -30.0f));
-    borderData.positionBuffer.vertices.push_back(glm::vec3(displayScale + displayXOffset, -displayScale, -30.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(-displayScale + displayXOffset, -displayScale, 30.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(displayScale + displayXOffset, -displayScale, 30.0f));
     borderData.colorBuffer.vertices.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
     borderData.colorBuffer.vertices.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
 
-    borderData.positionBuffer.vertices.push_back(glm::vec3(-displayScale + displayXOffset, displayScale, -30.0f));
-    borderData.positionBuffer.vertices.push_back(glm::vec3(displayScale + displayXOffset, displayScale, -30.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(-displayScale + displayXOffset, displayScale, 30.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(displayScale + displayXOffset, displayScale, 30.0f));
     borderData.colorBuffer.vertices.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
     borderData.colorBuffer.vertices.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
 
-    borderData.positionBuffer.vertices.push_back(glm::vec3(displayScale + displayXOffset, -displayScale, -30.0f));
-    borderData.positionBuffer.vertices.push_back(glm::vec3(displayScale + displayXOffset, displayScale, -30.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(displayScale + displayXOffset, -displayScale, 30.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(displayScale + displayXOffset, displayScale, 30.0f));
     borderData.colorBuffer.vertices.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
     borderData.colorBuffer.vertices.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
 
@@ -69,9 +69,9 @@ void FrequencySpectrum::Process(std::vector<unsigned char>* block)
     float displayScale = 5.0f;
     float offsetX = -16.0f;
     float offsetY = 0.0f;
-    float zPos = -30.0f;
+    float zPos = 30.0f;
 
-    unsigned int fftSize = 32768 * 2;
+    unsigned int fftSize = 1024 * 2;
     std::vector<unsigned char> fftBuffer;
     fftBuffer.reserve(fftSize); // 2 ^ 14. or 2.3 kHz Hz per frequency window.
 
@@ -87,7 +87,7 @@ void FrequencySpectrum::Process(std::vector<unsigned char>* block)
     std::vector<float> imags;
     auto startTime = std::chrono::high_resolution_clock::now();
     // FourierTransform::ComplexDFT(fftBuffer, reals, imags);
-    FourierTransform::ComplexFFT(fftBuffer, reals, imags);
+    FourierTransform::ComplexDFT(fftBuffer, reals, imags);
     auto stopTime = std::chrono::high_resolution_clock::now();
     std::chrono::duration<float> time = (stopTime - startTime);
     Logger::Log("Performed a fourier transform of ", fftSize / 2, " complex elements in ", time.count(), " sec.");

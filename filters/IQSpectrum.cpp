@@ -61,23 +61,58 @@ bool IQSpectrum::LoadGraphics(ShaderFactory* shaderFactory)
     borderData.colorBuffer.Initialize();
     float displayScale = 6.1f;
     float displayXOffset = 3.0f;
-    borderData.positionBuffer.vertices.push_back(glm::vec3(-displayScale + displayXOffset, -displayScale, -30.0f));
-    borderData.positionBuffer.vertices.push_back(glm::vec3(-displayScale + displayXOffset, displayScale, -30.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(-63.0f, -35.0f, 0.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(63.0f, 35.0f, 0.0f));
     borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
     borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
 
-    borderData.positionBuffer.vertices.push_back(glm::vec3(-displayScale + displayXOffset, -displayScale, -30.0f));
-    borderData.positionBuffer.vertices.push_back(glm::vec3(displayScale + displayXOffset, -displayScale, -30.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(63.0f, -35.0f, 0.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(-63.0f, 35.0f, 0.0f));
     borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
     borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
 
-    borderData.positionBuffer.vertices.push_back(glm::vec3(-displayScale + displayXOffset, displayScale, -30.0f));
-    borderData.positionBuffer.vertices.push_back(glm::vec3(displayScale + displayXOffset, displayScale, -30.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(63.0f, -35.0f, 0.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(-63.0f, -35.0f, 0.0f));
     borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
     borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
 
-    borderData.positionBuffer.vertices.push_back(glm::vec3(displayScale + displayXOffset, -displayScale, -30.0f));
-    borderData.positionBuffer.vertices.push_back(glm::vec3(displayScale + displayXOffset, displayScale, -30.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(63.0f, 35.0f, 0.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(-63.0f, 35.0f, 0.0f));
+    borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+    borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+
+    borderData.positionBuffer.vertices.push_back(glm::vec3(-63.0f, -35.0f, 0.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(-63.0f, 35.0f, 0.0f));
+    borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+    borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+
+    borderData.positionBuffer.vertices.push_back(glm::vec3(63.0f, 35.0f, 0.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(63.0f, -35.0f, 0.0f));
+    borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+    borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+
+    borderData.positionBuffer.vertices.push_back(glm::vec3(-displayScale + displayXOffset, -displayScale, 30.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(-displayScale + displayXOffset, displayScale, 30.0f));
+    borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+    borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+    
+    borderData.positionBuffer.vertices.push_back(glm::vec3(-displayScale + displayXOffset, -displayScale, 30.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(-displayScale + displayXOffset, displayScale, 30.0f));
+    borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+    borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+
+    borderData.positionBuffer.vertices.push_back(glm::vec3(-displayScale + displayXOffset, -displayScale, 30.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(displayScale + displayXOffset, -displayScale, 30.0f));
+    borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+    borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+
+    borderData.positionBuffer.vertices.push_back(glm::vec3(-displayScale + displayXOffset, displayScale, 30.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(displayScale + displayXOffset, displayScale, 30.0f));
+    borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+    borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+
+    borderData.positionBuffer.vertices.push_back(glm::vec3(displayScale + displayXOffset, -displayScale, 30.0f));
+    borderData.positionBuffer.vertices.push_back(glm::vec3(displayScale + displayXOffset, displayScale, 30.0f));
     borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
     borderData.colorBuffer.vertices.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
 
@@ -95,7 +130,7 @@ void IQSpectrum::Process(std::vector<unsigned char>* block)
     float scale = (1.0f / 127.5f) * displayScale;
     float offsetX = 3.0f;
     float offsetY = 0.0f;
-    float zPos = -30.0f;
+    float zPos = 30.0f;
 
     graphicsUpdateLock.lock();
     spectrumData.positionBuffer.vertices.clear();
@@ -123,26 +158,26 @@ void IQSpectrum::Process(std::vector<unsigned char>* block)
         // i = ((float)(*block)[n * 2] - 127.5f) * scale;
         // q = ((float)(*block)[n * 2 + 1] - 127.5f) * scale;
 
-        spectrumData.positionBuffer.vertices.push_back(glm::vec3(i + offsetX, q + offsetY, zPos));
-        spectrumData.colorBuffer.vertices.push_back(glm::vec3(0.50f + i * (1.0f / 512.0f), 0.50f + q * (1.0f / 512.0f), 1.0f));
+      //  spectrumData.positionBuffer.vertices.push_back(glm::vec3(i + offsetX, q + offsetY, zPos));
+      //  spectrumData.colorBuffer.vertices.push_back(glm::vec3(0.50f + i * (1.0f / 512.0f), 0.50f + q * (1.0f / 512.0f), 1.0f));
     }
 
 
     // Current view plane is at NEGATIVE 30, extending roughtly 17x10 (center to edges). Thats ... the reverse of what it should be. To investigate later.
-    // for (int i = 0; i < 20; i += 1)
-    // {
-    //     for (int j = 0; j < 20; j += 1)
-    //     {
-    //         for (int k = -30; k < 0; k += 10)
-    //         {              
-    //             float xF = (float)i / 200.0f + 0.50f;
-    //             float yF = (float)j / 200.0f + 0.50f;
-    //             float zF = (float)k / 200.0f + 0.50f;
-    //             spectrumData.positionBuffer.vertices.push_back(glm::vec3(i, j, k));
-    //             spectrumData.colorBuffer.vertices.push_back(glm::vec3(xF, yF, zF));
-    //         }
-    //     }
-    // }
+    for (int i = 0; i < 200; i += 1)
+    {
+        for (int j = 0; j < 200; j += 1)
+        {
+            for (int k = 0; k < 1; k += 1)
+            {              
+                float xF = (float)i / 200.0f + 0.50f;
+                float yF = (float)j / 200.0f + 0.50f;
+                float zF = (float)k / 200.0f + 0.50f;
+                spectrumData.positionBuffer.vertices.push_back(glm::vec3(i, j, k));
+                spectrumData.colorBuffer.vertices.push_back(glm::vec3(xF, yF, zF));
+            }
+        }
+    }
     graphicsUpdateLock.unlock();
 
     updateGraphics = true;

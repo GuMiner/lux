@@ -4,11 +4,15 @@
 #include <GLFW/glfw3.h>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
+#include "Viewer.h"
 
 class Input
 {
     // The window.
     static GLFWwindow* window;
+
+    // The viewer controlling graphical settings
+    static Viewer* viewer;
 
     // List of pressed keys.
     static std::set<int> pressedKeys;
@@ -44,7 +48,7 @@ public:
     static void SetupErrorCallback();
 
     // Sets callbacks this class uses
-    static void Setup(GLFWwindow* window, int width, int height);
+    static void Setup(GLFWwindow* window, Viewer* viewer);
 
     // Returns true if a key was pressed, false otherwise.
     static bool IsKeyPressed(int keyId);
