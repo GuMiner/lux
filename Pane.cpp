@@ -9,7 +9,7 @@
 glm::vec2 Pane::MinSize = glm::vec2(1.0f, 1.0f);
 
 Pane::Pane(glm::vec2 position, glm::vec2 size, Viewer* viewer, SentenceManager* sentenceManager, IPaneRenderable* paneContents)
-    : position(position), size(size), viewer(viewer), sentenceManager(sentenceManager), paneContents(paneContents), borderRenderer(),
+    : position(position), size(size), viewer(viewer), sentenceManager(sentenceManager), paneContents(paneContents), borderRenderer(false),
       titleOffset(0.40f), dragging(false), resizing(false)
 {
     titleSentenceId = sentenceManager->CreateNewSentence();

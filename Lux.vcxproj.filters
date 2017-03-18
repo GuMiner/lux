@@ -55,6 +55,9 @@
     <ClCompile Include="PointRenderer.cpp">
       <Filter>renderers</Filter>
     </ClCompile>
+    <ClCompile Include="filters\Spectrum.cpp">
+      <Filter>filters</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lux.h" />
@@ -132,6 +135,9 @@
     </ClInclude>
     <ClInclude Include="GuCommon\text\SentenceManager.h">
       <Filter>gucommon\text</Filter>
+    </ClInclude>
+    <ClInclude Include="filters\Spectrum.h">
+      <Filter>filters</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="filters\FrequencySpectrum.cpp" />
+    <ClCompile Include="filters\Spectrum.cpp" />
     <ClCompile Include="GuCommon\logging\Logger.cpp" />
     <ClCompile Include="GuCommon\shaders\ShaderFactory.cpp" />
     <ClCompile Include="GuCommon\stb\stb_implementations.cpp" />
@@ -43,6 +44,7 @@
   <ItemGroup>
     <ClInclude Include="filters\FilterBase.h" />
     <ClInclude Include="filters\FrequencySpectrum.h" />
+    <ClInclude Include="filters\Spectrum.h" />
     <ClInclude Include="GuCommon\data\TextDataTypes.h" />
     <ClInclude Include="GuCommon\logging\Logger.h" />
     <ClInclude Include="GuCommon\shaders\ShaderFactory.h" />

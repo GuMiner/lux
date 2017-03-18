@@ -19,7 +19,8 @@ bool LineRenderer::LoadProgram(ShaderFactory* shaderFactory)
     return true;
 }
 
-LineRenderer::LineRenderer()
+LineRenderer::LineRenderer(bool isLineStrip)
+    : isLineStrip(isLineStrip)
 {
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
@@ -50,7 +51,7 @@ void LineRenderer::Render(glm::mat4& projectionMatrix)
     // TODO use a dedicated shader so I don't need this.
     // glUniform1f(spectrumProgram.pointSizeLocation, 1.0f);
 
-    glDrawArrays(GL_LINES, 0, lastBufferSize);
+    glDrawArrays(isLineStrip ? GL_LINE_STRIP : GL_LINES, 0, lastBufferSize);
 }
 
 void LineRenderer::Clear()

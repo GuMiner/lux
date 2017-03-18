@@ -8,6 +8,7 @@
 #include "text\SentenceManager.h"
 #include "filters\FrequencySpectrum.h"
 #include "filters\IQSpectrum.h"
+#include "filters\Spectrum.h"
 #include "sdr\Sdr.h"
 #include "sdr\SdrBuffer.h"
 #include "Pane.h"
@@ -30,6 +31,9 @@ class Lux
 
     IQSpectrum* iqSpectrum;
     Pane* iqSpectrumPane;
+
+    Spectrum* spectrum;
+    Pane* spectrumPane;
     
     // Top-level display items.
     float fpsTimeAggregated;

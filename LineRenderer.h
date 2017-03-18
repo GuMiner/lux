@@ -24,13 +24,15 @@ class LineRenderer
     GLuint vao;
     std::size_t lastBufferSize;
 
+    bool isLineStrip;
+
 public:
     static bool LoadProgram(ShaderFactory* shaderFactory);
 
     PositionVbo positionBuffer;
     ColorVbo colorBuffer;
 
-    LineRenderer();
+    LineRenderer(bool isLineStrip);
 
     // Updates the GPU with whatever is currently in the line buffers.
     void Update();
