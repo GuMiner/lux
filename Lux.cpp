@@ -205,6 +205,7 @@ void Lux::Update(float currentTime, float frameTime)
 
     // Update our panes.
     fourierTransformPane->Update(currentTime, frameTime);
+    iqSpectrumPane->Update(currentTime, frameTime);
 }
 
 void Lux::Render(glm::mat4& viewMatrix)
@@ -236,6 +237,7 @@ void Lux::Render(glm::mat4& viewMatrix)
 
     // Render the panes
     fourierTransformPane->Render(projectionMatrix, viewer.perspectiveMatrix, viewMatrix);
+    iqSpectrumPane->Render(projectionMatrix, viewer.perspectiveMatrix, viewMatrix);
 }
 
 bool Lux::LoadGraphics()
@@ -256,9 +258,13 @@ bool Lux::LoadGraphics()
     sentenceManager.UpdateSentence(mouseToolTipSentenceId, "(?,?)", 12, glm::vec3(1.0f, 1.0f, 1.0f));
 
     glm::vec2 panePos = glm::vec2(-30.0f, -30.0f);
-    glm::vec2 paneSize = glm::vec2(60.0f, 60.0f);
+    glm::vec2 paneSize = glm::vec2(30.0f, 30.0f);
     fourierFilter = new FrequencySpectrum(panePos, paneSize, &dataBuffer);
     fourierTransformPane = new Pane(panePos, paneSize, &viewer, &sentenceManager, fourierFilter);
+
+    panePos = glm::vec2(1.0f, -30.0f);
+    iqSpectrum = new IQSpectrum(panePos, paneSize, &dataBuffer);
+    iqSpectrumPane = new Pane(panePos, paneSize, &viewer, &sentenceManager, iqSpectrum);
 
     return true;
 }
@@ -267,6 +273,9 @@ void Lux::UnloadGraphics()
 {
     delete fourierTransformPane;
     delete fourierFilter;
+
+    delete iqSpectrumPane;
+    delete iqSpectrum;
 
     glfwDestroyWindow(window);
     window = nullptr;

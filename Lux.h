@@ -6,11 +6,13 @@
 #include <glm\gtc\quaternion.hpp>
 #include "shaders\ShaderFactory.h"
 #include "text\SentenceManager.h"
-#include "filters\FilterBase.h"
+#include "filters\FrequencySpectrum.h"
+#include "filters\IQSpectrum.h"
 #include "sdr\Sdr.h"
 #include "sdr\SdrBuffer.h"
 #include "Pane.h"
 #include "Viewer.h"
+
 
 class Lux
 {
@@ -22,17 +24,19 @@ class Lux
     Sdr sdr;
     SdrBuffer dataBuffer;
 
-    // TODO test code remove.
+    // Pane-based display items.
     FrequencySpectrum* fourierFilter;
     Pane* fourierTransformPane;
-    // FilterBase* iqFilter;
+
+    IQSpectrum* iqSpectrum;
+    Pane* iqSpectrumPane;
     
+    // Top-level display items.
     float fpsTimeAggregated;
     int fpsFramesCounted;
     int fpsSentenceId;
     int dataSpeedSentenceId;
     int mouseToolTipSentenceId;
-
     void UpdateFps(float frameTime);
 
     bool LoadCoreGlslGraphics();
