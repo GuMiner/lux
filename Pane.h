@@ -9,6 +9,8 @@
 
 class Pane
 {
+    static glm::vec2 MinSize;
+
     Viewer* viewer;
     SentenceManager* sentenceManager;
 
@@ -23,11 +25,13 @@ class Pane
     glm::vec3 paneColor;
     LineRenderer borderRenderer;
 
-    void UpdatePaneBorders();
+    void UpdatePaneStructure();
 
     bool dragging;
+    bool resizing;
     glm::vec2 clickOffset; // The offset the user clicked the title in comparison to where the pane is.
     bool HasClickedTitle();
+    bool HasClickedResizer();
 
 public:
     Pane(glm::vec2 position, glm::vec2 size, Viewer* viewer, SentenceManager* sentenceManager, IPaneRenderable* paneContents);
