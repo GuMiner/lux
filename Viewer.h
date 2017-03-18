@@ -3,6 +3,15 @@
 #include <glm\vec3.hpp>
 #include <glm\mat4x4.hpp>
 
+struct ViewerCache
+{
+    float unitsPerPixel;
+    float xSize;
+    float ySize;
+
+    glm::vec2 letterboxingScreenOffset;
+};
+
 class Viewer
 {
     float fovY;
@@ -14,6 +23,11 @@ class Viewer
     glm::vec3 position;
     glm::vec3 target;
     glm::vec3 up;
+
+    bool useCache;
+    ViewerCache viewerCache;
+    void RecomputeCache();
+    glm::vec2 GetLetterboxingScreenOffset();
 
     void CheckMoveAxis(int posKeyId, int negKeyId, float frameTime, float* eye, float* target) const;
     void DialVariable(int posKeyId, int negKeyId, float dialAmount, float* value) const;
@@ -34,15 +48,15 @@ public:
     void SetScreenSize(int width, int height);
     
     // Retrieves the size a pixel will be at Z=0
-    float GetUnitsPerPixel() const;
+    float GetUnitsPerPixel();
 
     // Computes the position (XY plane) of the mouse given the screen coordinates
-    glm::vec2 GetGridPos(glm::vec2 screenPos) const;
-    glm::vec2 GetGridPos(glm::ivec2 screenPos) const;
+    glm::vec2 GetGridPos(glm::vec2 screenPos);
+    glm::vec2 GetGridPos(glm::ivec2 screenPos);
     float GetAspectRatio() const;
 
     // Returns the total X/Y size of hte display
-    float GetXSize() const;
-    float GetYSize() const;
+    float GetXSize();
+    float GetYSize();
 };
 

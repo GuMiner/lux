@@ -1,55 +1,33 @@
 #pragma once
 #include "FilterBase.h"
-#include "GuCommon\vertex\PositionVbo.hpp"
-#include "GuCommon\vertex\ColorVbo.hpp"
+#include "GuCommon\shaders\ShaderFactory.h"
 #include "math\WindowedSincFilter.h"
+#include "IPaneRenderable.h"
+#include "PointRenderer.h"
+#include "LineRenderer.h"
 
-struct FreqPointSpectrumProgram
+class FrequencySpectrum : public FilterBase, public IPaneRenderable
 {
-    GLuint programId;
+    PointRenderer fftReals;
+    PointRenderer fftImags;
 
-    GLuint projMatrixLocation;
-    GLuint pointSizeLocation;
-    GLuint transparencyLocation;
-};
-
-struct FreqPointSpectrumData
-{
-    GLuint vao;
-    
-    PositionVbo positionBuffer;
-    ColorVbo colorBuffer;
-    std::size_t lastBufferSize;
-};
-
-struct FreqBorderData
-{
-    GLuint vao;
-    PositionVbo positionBuffer;
-    ColorVbo colorBuffer;
-};
-
-class FrequencySpectrum : public FilterBase
-{
-    FreqPointSpectrumProgram spectrumProgram;
-    FreqPointSpectrumData spectrumData;
-    FreqBorderData borderData;
-    
+    glm::vec2 lastPosition;
+    glm::vec2 lastSize;
+    bool updateGraphics;
     std::mutex graphicsUpdateLock;
-    bool firstUpdate;
 
 public:
-    FrequencySpectrum(SdrBuffer* dataBuffer);
+    FrequencySpectrum(glm::vec2 startPosition, glm::vec2 startSize, SdrBuffer* dataBuffer);
     virtual ~FrequencySpectrum();
 
     // Inherited via FilterBase
-    virtual const char* GetName() const override
-    {
-        return "Frequency Spectrum";
-    }
-
-    virtual bool LoadGraphics(ShaderFactory* shaderFactory) override;
+    virtual std::string GetName() const override;
     virtual void Process(std::vector<unsigned char>* block) override;
-    virtual void Render(glm::mat4 & projectionMatrix) override;
+
+    // Inherited via IPaneRenderable
+    virtual bool HasTitleUpdate() override;
+    virtual std::string GetTitle() override;
+    virtual void Update(float elapsedTime, float frameTime) override;
+    virtual void Render(glm::mat4 & projectionMatrix, glm::vec2 position, glm::vec2 size) override;
 };
 

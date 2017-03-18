@@ -46,7 +46,15 @@
     <ClCompile Include="math\FourierTransform.cpp">
       <Filter>math</Filter>
     </ClCompile>
-    <ClCompile Include="Pane.cpp" />
+    <ClCompile Include="Pane.cpp">
+      <Filter>pane</Filter>
+    </ClCompile>
+    <ClCompile Include="LineRenderer.cpp">
+      <Filter>renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="PointRenderer.cpp">
+      <Filter>renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lux.h" />
@@ -113,8 +121,18 @@
     <ClInclude Include="math\FourierTransform.h">
       <Filter>math</Filter>
     </ClInclude>
-    <ClInclude Include="Pane.h" />
-    <ClInclude Include="IPaneRenderable.h" />
+    <ClInclude Include="IPaneRenderable.h">
+      <Filter>pane</Filter>
+    </ClInclude>
+    <ClInclude Include="Pane.h">
+      <Filter>pane</Filter>
+    </ClInclude>
+    <ClInclude Include="LineRenderer.h">
+      <Filter>renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="PointRenderer.h">
+      <Filter>renderers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="sdr">
@@ -149,6 +167,12 @@
     </Filter>
     <Filter Include="math">
       <UniqueIdentifier>{4897884c-bac8-4c05-b81d-d3367a493522}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pane">
+      <UniqueIdentifier>{7117b332-90e4-45a1-8909-aa144e9b7c59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="renderers">
+      <UniqueIdentifier>{d1635c11-9845-47e5-9f89-82c4af4b7be9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

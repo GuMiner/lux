@@ -9,6 +9,7 @@
 #include "filters\FilterBase.h"
 #include "sdr\Sdr.h"
 #include "sdr\SdrBuffer.h"
+#include "Pane.h"
 #include "Viewer.h"
 
 class Lux
@@ -22,11 +23,15 @@ class Lux
     SdrBuffer dataBuffer;
 
     // TODO test code remove.
-    std::vector<FilterBase*> filters;
+    FrequencySpectrum* fourierFilter;
+    Pane* fourierTransformPane;
+    // FilterBase* iqFilter;
+    
     int sentenceId;
     int dataSpeedSentenceId;
     int mouseToolTipSentenceId;
 
+    bool LoadCoreGlslGraphics();
     void LogSystemSetup();
 
     void HandleEvents(bool& focusPaused, bool& escapePaused);

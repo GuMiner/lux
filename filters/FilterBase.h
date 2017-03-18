@@ -2,9 +2,7 @@
 #include <chrono>
 #include <future>
 #include <thread>
-#include <glm\gtc\matrix_transform.hpp>
 #include "sdr\SdrBuffer.h"
-#include "GuCommon\shaders\ShaderFactory.h"
 
 // Defines the base class for filter operations performed on I/Q SDR data
 class FilterBase
@@ -67,7 +65,6 @@ class FilterBase
 
 protected:
     bool enabled;
-    bool updateGraphics;
 
     void StopFilter()
     {
@@ -89,18 +86,13 @@ public:
         acquisitionThread = std::async(std::launch::async, &FilterBase::AcquireBlocks, this);
     }
 
-    virtual const char* GetName() const = 0;
-
-    virtual bool LoadGraphics(ShaderFactory* shaderFactory) = 0;
+    virtual std::string GetName() const = 0;
 
     // Performs filter-specific short-term processing. Called for every new block.
     // Processes that need several blocks, or are expected to acquire blocks and then
     //  perform extensive processing them (discarding or caching new blocks during the extensive processing),
     //  should use a dedicated thread to perform said processing.
     virtual void Process(std::vector<unsigned char>* block) = 0;
-
-    // Renders graphical aspects associated with the filter.
-    virtual void Render(glm::mat4& projectionMatrix) = 0;
 
     virtual ~FilterBase()
     {

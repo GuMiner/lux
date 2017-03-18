@@ -28,11 +28,13 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="filters\FilterBase.cpp" />
     <ClCompile Include="filters\IQSpectrum.cpp" />
+    <ClCompile Include="LineRenderer.cpp" />
     <ClCompile Include="math\FourierTransform.cpp" />
     <ClCompile Include="math\CustomFilter.cpp" />
     <ClCompile Include="Lux.cpp" />
     <ClCompile Include="math\WindowedSincFilter.cpp" />
     <ClCompile Include="Pane.cpp" />
+    <ClCompile Include="PointRenderer.cpp" />
     <ClCompile Include="sdr\RtlSdrDllLoader.cpp" />
     <ClCompile Include="sdr\Sdr.cpp" />
     <ClCompile Include="sdr\SdrBuffer.cpp" />
@@ -52,6 +54,7 @@
     <ClInclude Include="GuCommon\vertex\VboBase.hpp" />
     <ClInclude Include="GuCommon\vertex\VboHelper.hpp" />
     <ClInclude Include="IPaneRenderable.h" />
+    <ClInclude Include="LineRenderer.h" />
     <ClInclude Include="math\Constants.h" />
     <ClInclude Include="math\FourierTransform.h" />
     <ClInclude Include="math\CustomFilter.h" />
@@ -60,6 +63,7 @@
     <ClInclude Include="Lux.h" />
     <ClInclude Include="math\WindowedSincFilter.h" />
     <ClInclude Include="Pane.h" />
+    <ClInclude Include="PointRenderer.h" />
     <ClInclude Include="sdr\RtlSdrDllLoader.h" />
     <ClInclude Include="sdr\Sdr.h" />
     <ClInclude Include="sdr\SdrBuffer.h" />

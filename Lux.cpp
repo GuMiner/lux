@@ -6,6 +6,8 @@
 #include "filters\IQSpectrum.h"
 #include "filters\FrequencySpectrum.h"
 #include "Input.h"
+#include "LineRenderer.h"
+#include "PointRenderer.h"
 #include "version.h"
 #include "Lux.h"
 
@@ -17,7 +19,7 @@
 
 Lux::Lux() 
     : shaderFactory(), sentenceManager(), viewer(),
-      sdr(), dataBuffer(&sdr, 0, 30), filters() // TODO configuration somewhere. TODO device ID should be passed-in separately.
+      sdr(), dataBuffer(&sdr, 0, 30) // TODO config somewhere, with device ID passed in somewhere else
 {
 }
 
@@ -40,120 +42,7 @@ void Lux::LogSystemSetup()
     Logger::Log("Max Texture Size: ", maxTextureSize);
 }
 
-bool Lux::Initialize()
-{
-    if (!sdr.Initialize())
-    {
-        Logger::LogError("SDR startup failure!");
-        return false;
-    }
-
-    // Note we don't need to remove the device as deletion will handle that for us.
-    Logger::Log("Open device: ", sdr.OpenDevice(0));
-
-    Logger::Log("Setting center frequency: ", sdr.SetCenterFrequency(0, 106100000)); // 452, 734, 0 89,500,0, 106,100,0
-    Logger::Log("Setting sampling rate to max w/o dropped packets: ", sdr.SetSampleRate(0, 2400000));
-    Logger::Log("Setting bandwidth to sampling rate to use quadrature sampling: ", sdr.SetTunerBandwidth(0, 2400000));
-    Logger::Log("Setting auto-gain off: Tuner: ", sdr.SetTunerGainMode(0, true), " Internal: ", sdr.SetInternalAutoGain(0, false));
-    Logger::Log("Setting gain of tuner: ", sdr.SetTunerGain(0, 0));
-    dataBuffer.StartAcquisition();
-
-    // Setup GLFW
-    if (!glfwInit())
-    {
-        Logger::LogError("GLFW startup failure");
-        return false;
-    }
-
-    return true;
-}
-
-void Lux::Deinitialize()
-{
-    dataBuffer.StopAcquisition();
-
-    glfwTerminate();
-}
-
-void Lux::HandleEvents(bool& focusPaused, bool& escapePaused)
-{
-    glfwPollEvents();
-    focusPaused = !Input::hasFocus;
-    escapePaused = Input::IsKeyTyped(GLFW_KEY_ESCAPE);
-}
-
-// TODO hacky code to remove with a redesign. Still prototyping here...
-int gainId = 0;
-float aggregate = 0;
-int frames = 0;
-void Lux::Update(float currentTime, float frameTime)
-{
-    viewer.Update(frameTime);
-    
-    glm::vec2 screenPos = viewer.GetGridPos(Input::GetMousePos());
-    std::stringstream mousePos;
-    mousePos << screenPos.x << ", " << screenPos.y;
-    sentenceManager.UpdateSentence(mouseToolTipSentenceId, mousePos.str(), 22, glm::vec3(1.0f, 1.0f, 0.0f));
-
-    std::stringstream speed;
-    speed << "Rate: " << dataBuffer.GetCurrentSampleRate();
-    sentenceManager.UpdateSentence(dataSpeedSentenceId, speed.str(), 22, glm::vec3(1.0f, 1.0f, 1.0f));
-
-    ++frames;
-    aggregate += frameTime;
-    if (aggregate > 1.0f)
-    {
-        std::stringstream framerate;
-        framerate << "FPS: " << (float)((float)frames / aggregate);
-        sentenceManager.UpdateSentence(sentenceId, framerate.str(), 16, glm::vec3(0.0f, 1.0f, 1.0f));
-
-        aggregate = 0;
-        frames = 0;
-    }
-
-    if (Input::IsKeyTyped(GLFW_KEY_UP))
-    {
-        ++gainId;
-        gainId = std::min((int)sdr.GetTunerGainSettings(0).size() - 1, gainId);
-        Logger::Log("Setting gain of tuner to ID ", gainId, ": ", sdr.SetTunerGain(0, gainId));
-    }
-    else if (Input::IsKeyTyped(GLFW_KEY_DOWN))
-    {
-        --gainId;
-        gainId = std::max(gainId, 0);
-        Logger::Log("Setting gain of tuner to ID ", gainId, ": ", sdr.SetTunerGain(0, gainId));
-    }
-}
-
-void Lux::Render(glm::mat4& viewMatrix)
-{
-    glm::mat4 projectionMatrix = viewer.perspectiveMatrix * viewMatrix;
-
-    // Clear the screen (and depth buffer) before any rendering begins.
-    const GLfloat color[] = { 0, 0, 0, 1 };
-    const GLfloat one = 1.0f;
-    glClearBufferfv(GL_COLOR, 0, color);
-    glClearBufferfv(GL_DEPTH, 0, &one);
-
-    // TODO render something interesting.
-    glm::mat4 sentenceTestMatrix = glm::scale(glm::translate(glm::mat4(), glm::vec3(-0.821f, -0.121f, 0.0f)), glm::vec3(0.022f, 0.022f, 0.02f)) * viewMatrix;
-    sentenceManager.RenderSentence(sentenceId, viewer.perspectiveMatrix, sentenceTestMatrix);
-
-    sentenceTestMatrix = glm::scale(glm::translate(glm::mat4(), glm::vec3(-0.821f, -0.091f, 0.0f)), glm::vec3(0.022f, 0.022f, 0.02f)) * viewMatrix;
-    sentenceManager.RenderSentence(dataSpeedSentenceId, viewer.perspectiveMatrix, sentenceTestMatrix);
-
-    glm::vec2 screenPos = viewer.GetGridPos(Input::GetMousePos());
-    glm::mat4 mouseToolTipMatrix = glm::scale(glm::mat4(), glm::vec3(0.042f, 0.042f, 0.042f)) * glm::translate(glm::mat4(), glm::vec3(screenPos.x, screenPos.y, 0.0f)) * viewMatrix;
-    sentenceManager.RenderSentence(mouseToolTipSentenceId, viewer.perspectiveMatrix, mouseToolTipMatrix);
-
-    // Render all our filters.
-    for (FilterBase* filter : filters)
-    {
-        filter->Render(projectionMatrix);
-    }
-}
-
-bool Lux::LoadGraphics()
+bool Lux::LoadCoreGlslGraphics()
 {
     // 24 depth bits, 8 stencil bits, 8x AA, major version 4.
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -205,10 +94,151 @@ bool Lux::LoadGraphics()
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
 
-    //// Setup any assets ////
+    //// Setup any core assets ////
     if (!sentenceManager.LoadFont(&shaderFactory, "fonts/DejaVuSans.ttf"))
     {
         Logger::LogError("Font loading failure!");
+        return false;
+    }
+
+    if (!PointRenderer::LoadProgram(&shaderFactory))
+    {
+        Logger::LogError("Could not load the point rendering program!");
+        return false;
+    }
+
+    if (!LineRenderer::LoadProgram(&shaderFactory))
+    {
+        Logger::LogError("Could not load the line rendering program!");
+        return false;
+    }
+
+    return true;
+}
+
+bool Lux::Initialize()
+{
+    if (!sdr.Initialize())
+    {
+        Logger::LogError("SDR startup failure!");
+        return false;
+    }
+
+    // Note we don't need to remove the device as deletion will handle that for us.
+    Logger::Log("Open device: ", sdr.OpenDevice(0));
+
+    Logger::Log("Setting center frequency: ", sdr.SetCenterFrequency(0, 106100000)); // 452, 734, 0 89,500,0, 106,100,0
+    Logger::Log("Setting sampling rate to max w/o dropped packets: ", sdr.SetSampleRate(0, 2400000));
+    Logger::Log("Setting bandwidth to sampling rate to use quadrature sampling: ", sdr.SetTunerBandwidth(0, 2400000));
+    Logger::Log("Setting auto-gain off: Tuner: ", sdr.SetTunerGainMode(0, true), " Internal: ", sdr.SetInternalAutoGain(0, false));
+    Logger::Log("Setting gain of tuner: ", sdr.SetTunerGain(0, 0));
+    dataBuffer.StartAcquisition();
+
+    // Setup GLFW
+    if (!glfwInit())
+    {
+        Logger::LogError("GLFW startup failure");
+        return false;
+    }
+
+    return true;
+}
+
+void Lux::Deinitialize()
+{
+    dataBuffer.StopAcquisition();
+    glfwTerminate();
+}
+
+void Lux::HandleEvents(bool& focusPaused, bool& escapePaused)
+{
+    glfwPollEvents();
+    focusPaused = !Input::hasFocus;
+    escapePaused = Input::IsKeyTyped(GLFW_KEY_ESCAPE);
+}
+
+// TODO hacky code to remove with a redesign. Still prototyping here...
+int gainId = 0;
+float aggregate = 0;
+int frames = 0;
+void Lux::Update(float currentTime, float frameTime)
+{
+    viewer.Update(frameTime);
+    
+    glm::vec2 screenPos = viewer.GetGridPos(Input::GetMousePos());
+    std::stringstream mousePos;
+    mousePos << screenPos.x << ", " << screenPos.y;
+    sentenceManager.UpdateSentence(mouseToolTipSentenceId, mousePos.str(), 22, glm::vec3(1.0f, 1.0f, 0.0f));
+
+    std::stringstream speed;
+    speed << "Rate: " << dataBuffer.GetCurrentSampleRate();
+    sentenceManager.UpdateSentence(dataSpeedSentenceId, speed.str(), 22, glm::vec3(1.0f, 1.0f, 1.0f));
+
+    ++frames;
+    aggregate += frameTime;
+    if (aggregate > 1.0f)
+    {
+        std::stringstream framerate;
+        framerate << "FPS: " << (float)((float)frames / aggregate);
+        sentenceManager.UpdateSentence(sentenceId, framerate.str(), 16, glm::vec3(0.0f, 1.0f, 1.0f));
+
+        aggregate = 0;
+        frames = 0;
+    }
+
+    if (Input::IsKeyTyped(GLFW_KEY_UP))
+    {
+        ++gainId;
+        gainId = std::min((int)sdr.GetTunerGainSettings(0).size() - 1, gainId);
+        Logger::Log("Setting gain of tuner to ID ", gainId, ": ", sdr.SetTunerGain(0, gainId));
+    }
+    else if (Input::IsKeyTyped(GLFW_KEY_DOWN))
+    {
+        --gainId;
+        gainId = std::max(gainId, 0);
+        Logger::Log("Setting gain of tuner to ID ", gainId, ": ", sdr.SetTunerGain(0, gainId));
+    }
+
+    // Update our panes.
+    fourierTransformPane->Update(currentTime, frameTime);
+}
+
+void Lux::Render(glm::mat4& viewMatrix)
+{
+    glm::mat4 projectionMatrix = viewer.perspectiveMatrix * viewMatrix;
+
+    // Clear the screen (and depth buffer) before any rendering begins.
+    const GLfloat color[] = { 0, 0, 0, 1 };
+    const GLfloat one = 1.0f;
+    glClearBufferfv(GL_COLOR, 0, color);
+    glClearBufferfv(GL_DEPTH, 0, &one);
+
+    // TODO render something interesting.
+    glm::mat4 sentenceTestMatrix = glm::scale(glm::translate(glm::mat4(), glm::vec3(-0.821f, -0.121f, 0.0f)), glm::vec3(0.022f, 0.022f, 0.02f)) * viewMatrix;
+    sentenceManager.RenderSentence(sentenceId, viewer.perspectiveMatrix, sentenceTestMatrix);
+
+    sentenceTestMatrix = glm::scale(glm::translate(glm::mat4(), glm::vec3(-0.821f, -0.091f, 0.0f)), glm::vec3(0.022f, 0.022f, 0.02f)) * viewMatrix;
+    sentenceManager.RenderSentence(dataSpeedSentenceId, viewer.perspectiveMatrix, sentenceTestMatrix);
+
+    glm::vec2 screenPos = viewer.GetGridPos(Input::GetMousePos());
+    glm::mat4 mouseToolTipMatrix = glm::scale(glm::mat4(), glm::vec3(0.042f, 0.042f, 0.042f)) * glm::translate(glm::mat4(), glm::vec3(screenPos.x, screenPos.y, 0.0f)) * viewMatrix;
+    sentenceManager.RenderSentence(mouseToolTipSentenceId, viewer.perspectiveMatrix, mouseToolTipMatrix);
+
+    // Render all our filters.
+    // iqFilter->Render(projectionMatrix); // render the IQ one only.
+    // for (FilterBase* filter : filters)
+    // {
+    //     filter->Render(projectionMatrix);
+    // }
+
+    // Render the panes
+    fourierTransformPane->Render(projectionMatrix, viewer.perspectiveMatrix, viewMatrix);
+}
+
+bool Lux::LoadGraphics()
+{
+    if (!LoadCoreGlslGraphics())
+    {
         return false;
     }
 
@@ -222,26 +252,18 @@ bool Lux::LoadGraphics()
     mouseToolTipSentenceId = sentenceManager.CreateNewSentence();
     sentenceManager.UpdateSentence(mouseToolTipSentenceId, "(?,?)", 22, glm::vec3(1.0f, 1.0f, 1.0f));
 
-    filters.push_back(new IQSpectrum(&dataBuffer));
-    filters.push_back(new FrequencySpectrum(&dataBuffer));
-    for (FilterBase* filter : filters)
-    {
-        if (!filter->LoadGraphics(&shaderFactory))
-        {
-            Logger::LogError("Error loading filter '", filter->GetName(), "'.");
-            return false;
-        }
-    }
+    glm::vec2 panePos = glm::vec2(-30.0f, -30.0f);
+    glm::vec2 paneSize = glm::vec2(60.0f, 60.0f);
+    fourierFilter = new FrequencySpectrum(panePos, paneSize, &dataBuffer);
+    fourierTransformPane = new Pane(panePos, paneSize, &viewer, &sentenceManager, fourierFilter);
 
     return true;
 }
 
 void Lux::UnloadGraphics()
 {
-    for (FilterBase* filter : filters)
-    {
-        delete filter;
-    }
+    delete fourierTransformPane;
+    delete fourierFilter;
 
     glfwDestroyWindow(window);
     window = nullptr;
