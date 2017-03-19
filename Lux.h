@@ -14,7 +14,6 @@
 #include "Pane.h"
 #include "Viewer.h"
 
-
 class Lux
 {
     GLFWwindow* window;

@@ -58,6 +58,10 @@
     <ClCompile Include="filters\Spectrum.cpp">
       <Filter>filters</Filter>
     </ClCompile>
+    <ClCompile Include="AudioExporter.cpp">
+      <Filter>exporter</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioStream.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lux.h" />
@@ -139,6 +143,10 @@
     <ClInclude Include="filters\Spectrum.h">
       <Filter>filters</Filter>
     </ClInclude>
+    <ClInclude Include="AudioExporter.h">
+      <Filter>exporter</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioStream.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="sdr">
@@ -179,6 +187,9 @@
     </Filter>
     <Filter Include="renderers">
       <UniqueIdentifier>{d1635c11-9845-47e5-9f89-82c4af4b7be9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="exporter">
+      <UniqueIdentifier>{3dabd67e-fe42-4f7a-8a29-54429f1e03f9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

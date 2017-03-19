@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AudioExporter.cpp" />
+    <ClCompile Include="AudioStream.cpp" />
     <ClCompile Include="filters\FrequencySpectrum.cpp" />
     <ClCompile Include="filters\Spectrum.cpp" />
     <ClCompile Include="GuCommon\logging\Logger.cpp" />
@@ -42,6 +44,8 @@
     <ClCompile Include="Viewer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AudioExporter.h" />
+    <ClInclude Include="AudioStream.h" />
     <ClInclude Include="filters\FilterBase.h" />
     <ClInclude Include="filters\FrequencySpectrum.h" />
     <ClInclude Include="filters\Spectrum.h" />
