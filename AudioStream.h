@@ -4,6 +4,7 @@
 #include <mutex>
 #include "filters\FilterBase.h"
 #include "sdr\SdrBuffer.h"
+#include "IAudioTransformer.h"
 
 class AudioStream : public sf::SoundStream, public FilterBase
 {
@@ -15,8 +16,10 @@ class AudioStream : public sf::SoundStream, public FilterBase
     std::vector<sf::Int16> pingPongFirstBuffer;
     std::vector<sf::Int16> pingPongSecondBuffer;
 
+    IAudioTransformer* audioTransformer;
+
 public:
-    AudioStream(SdrBuffer* sdrBuffer);
+    AudioStream(SdrBuffer* sdrBuffer, IAudioTransformer* initialAudioTransformer);
     virtual ~AudioStream();
 
     // Starts / Stops the audio stream.
@@ -30,5 +33,7 @@ public:
     // Inherited via FilterBase
     virtual std::string GetName() const override;
     virtual void Process(std::vector<unsigned char>* block) override;
+
+    void SetAudioTransformer(IAudioTransformer* audioTransformer);
 };
 

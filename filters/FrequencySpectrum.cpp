@@ -17,7 +17,7 @@ std::string FrequencySpectrum::GetName() const
 
 void FrequencySpectrum::Process(std::vector<unsigned char>* block)
 {
-    Logger::Log("Processing block of ", block->size(), " elements in filter '", GetName(), "'.");
+    // Logger::Log("Processing block of ", block->size(), " elements in filter '", GetName(), "'.");
 
     // Displays the IQ spectrum flattened on the XY plane.
     unsigned int fftSize = 1024 * 2;

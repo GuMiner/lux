@@ -2,11 +2,15 @@
 #include "AudioExporter.h"
 
 
-AudioExporter::AudioExporter(AudioStream* audioStream)
+AudioExporter::AudioExporter(SdrBuffer* sdrBuffer)
+    : amAudioTransformer()
 {
+    audioStream = new AudioStream(sdrBuffer, &amAudioTransformer);
+    audioStream->Start();
 }
-
 
 AudioExporter::~AudioExporter()
 {
+    audioStream->Stop();
+    delete audioStream;
 }

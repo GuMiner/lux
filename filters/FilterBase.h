@@ -38,7 +38,7 @@ class FilterBase
                     currentBlock.clear();
                     currentBlock.insert(currentBlock.begin(), dataBuffer->GetBuffer().begin() + startOffset, dataBuffer->GetBuffer().begin() + endOffset);
                     
-                    Logger::Log("Filter '", GetName(), "' processing new block ID ", (int)localBlockId, ".");
+                    // Logger::Log("Filter '", GetName(), "' processing new block ID ", (int)localBlockId, ".");
                     this->Process(&currentBlock);
                     
                     ++localBlockId;

@@ -272,6 +272,8 @@ bool Lux::LoadGraphics()
     spectrum = new Spectrum(panePos, paneSize, &dataBuffer);
     spectrumPane = new Pane(panePos, paneSize, &viewer, &sentenceManager, spectrum);
 
+    audioExporter = new AudioExporter(&dataBuffer);
+
     return true;
 }
 
@@ -285,6 +287,8 @@ void Lux::UnloadGraphics()
 
     delete spectrumPane;
     delete spectrum;
+
+    delete audioExporter;
 
     glfwDestroyWindow(window);
     window = nullptr;

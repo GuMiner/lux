@@ -19,10 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AMAudioTransformer.cpp" />
     <ClCompile Include="AudioExporter.cpp" />
     <ClCompile Include="AudioStream.cpp" />
     <ClCompile Include="filters\FrequencySpectrum.cpp" />
     <ClCompile Include="filters\Spectrum.cpp" />
+    <ClCompile Include="FMAudioTransformer.cpp" />
     <ClCompile Include="GuCommon\logging\Logger.cpp" />
     <ClCompile Include="GuCommon\shaders\ShaderFactory.cpp" />
     <ClCompile Include="GuCommon\stb\stb_implementations.cpp" />
@@ -44,11 +46,13 @@
     <ClCompile Include="Viewer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AMAudioTransformer.h" />
     <ClInclude Include="AudioExporter.h" />
     <ClInclude Include="AudioStream.h" />
     <ClInclude Include="filters\FilterBase.h" />
     <ClInclude Include="filters\FrequencySpectrum.h" />
     <ClInclude Include="filters\Spectrum.h" />
+    <ClInclude Include="FMAudioTransformer.h" />
     <ClInclude Include="GuCommon\data\TextDataTypes.h" />
     <ClInclude Include="GuCommon\logging\Logger.h" />
     <ClInclude Include="GuCommon\shaders\ShaderFactory.h" />
@@ -59,6 +63,7 @@
     <ClInclude Include="GuCommon\vertex\UvVbo.hpp" />
     <ClInclude Include="GuCommon\vertex\VboBase.hpp" />
     <ClInclude Include="GuCommon\vertex\VboHelper.hpp" />
+    <ClInclude Include="IAudioTransformer.h" />
     <ClInclude Include="IPaneRenderable.h" />
     <ClInclude Include="LineRenderer.h" />
     <ClInclude Include="math\Constants.h" />

@@ -34,7 +34,7 @@ std::string IQSpectrum::GetName() const
 
 void IQSpectrum::Process(std::vector<unsigned char>* block)
 {
-    Logger::Log("Processing block of ", block->size(), " elements in filter '", GetName(), "'.");
+    // Logger::Log("Processing block of ", block->size(), " elements in filter '", GetName(), "'.");
 
     // Displays the IQ spectrum flattened on the XY plane.
     float scale = (1.0f / 127.5f) * std::min(lastSize.x, lastSize.y);

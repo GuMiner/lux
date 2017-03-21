@@ -58,10 +58,18 @@
     <ClCompile Include="filters\Spectrum.cpp">
       <Filter>filters</Filter>
     </ClCompile>
+    <ClCompile Include="AudioStream.cpp">
+      <Filter>audio</Filter>
+    </ClCompile>
     <ClCompile Include="AudioExporter.cpp">
       <Filter>exporter</Filter>
     </ClCompile>
-    <ClCompile Include="AudioStream.cpp" />
+    <ClCompile Include="AMAudioTransformer.cpp">
+      <Filter>audio</Filter>
+    </ClCompile>
+    <ClCompile Include="FMAudioTransformer.cpp">
+      <Filter>audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lux.h" />
@@ -143,10 +151,21 @@
     <ClInclude Include="filters\Spectrum.h">
       <Filter>filters</Filter>
     </ClInclude>
+    <ClInclude Include="AudioStream.h">
+      <Filter>audio</Filter>
+    </ClInclude>
     <ClInclude Include="AudioExporter.h">
       <Filter>exporter</Filter>
     </ClInclude>
-    <ClInclude Include="AudioStream.h" />
+    <ClInclude Include="IAudioTransformer.h">
+      <Filter>audio</Filter>
+    </ClInclude>
+    <ClInclude Include="AMAudioTransformer.h">
+      <Filter>audio</Filter>
+    </ClInclude>
+    <ClInclude Include="FMAudioTransformer.h">
+      <Filter>audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="sdr">
@@ -190,6 +209,9 @@
     </Filter>
     <Filter Include="exporter">
       <UniqueIdentifier>{3dabd67e-fe42-4f7a-8a29-54429f1e03f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="audio">
+      <UniqueIdentifier>{2cf2cd65-dacb-497f-8304-265b775b4b08}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

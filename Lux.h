@@ -13,6 +13,7 @@
 #include "sdr\SdrBuffer.h"
 #include "Pane.h"
 #include "Viewer.h"
+#include "AudioExporter.h"
 
 class Lux
 {
@@ -33,6 +34,8 @@ class Lux
 
     Spectrum* spectrum;
     Pane* spectrumPane;
+
+    AudioExporter* audioExporter;
     
     // Top-level display items.
     float fpsTimeAggregated;
